@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'backend/supabase/**'
+      - "backend/supabase/**"
   workflow_dispatch:
 
 jobs:
@@ -18,10 +18,15 @@ jobs:
       APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
       APNS_KEY_ID: ${{ secrets.APNS_KEY_ID }}
       APNS_P8_CERTIFICATE: ${{ secrets.APNS_P8_CERTIFICATE }}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
 
       - name: Set Apple Bundle ID
         run: |
@@ -39,22 +44,17 @@ jobs:
         run: |
           supabase secrets set APNS_P8_CERTIFICATE="$APNS_P8_CERTIFICATE" --project-ref $SUPABASE_PROJECT_ID
 
-      - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
-        with:
-          version: latest
-      
       - name: Login to Supabase
         run: supabase login --token $SUPABASE_ACCESS_TOKEN
-      
+
       - name: Link to Supabase project
         working-directory: ./backend/supabase
         run: supabase link --project-ref $SUPABASE_PROJECT_ID --password "$SUPABASE_DB_PASSWORD"
-      
+
       - name: Deploy database migrations
         working-directory: ./backend/supabase
         run: supabase db push
-      
+
       - name: Deploy Edge Functions
         working-directory: ./backend/supabase
         run: supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
