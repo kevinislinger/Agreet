@@ -28,6 +28,9 @@ jobs:
         with:
           version: latest
 
+      - name: Login to Supabase
+        run: supabase login --token $SUPABASE_ACCESS_TOKEN
+
       - name: Set Apple Bundle ID
         run: |
           supabase secrets set APPLE_BUNDLE_ID="$APPLE_BUNDLE_ID" --project-ref $SUPABASE_PROJECT_ID
@@ -43,9 +46,6 @@ jobs:
       - name: Set APNS P8 Certificate
         run: |
           supabase secrets set APNS_P8_CERTIFICATE="$APNS_P8_CERTIFICATE" --project-ref $SUPABASE_PROJECT_ID
-
-      - name: Login to Supabase
-        run: supabase login --token $SUPABASE_ACCESS_TOKEN
 
       - name: Link to Supabase project
         working-directory: ./backend/supabase
