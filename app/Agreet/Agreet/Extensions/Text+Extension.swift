@@ -3,36 +3,36 @@ import SwiftUI
 extension Text {
     func primaryTextStyle() -> some View {
         self
-            .foregroundColor(Color.appTextPrimary)
+            .foregroundColor(Color.themeTextPrimary)
     }
     
     func secondaryTextStyle() -> some View {
         self
-            .foregroundColor(Color.appTextSecondary)
+            .foregroundColor(Color.themeTextSecondary)
     }
     
     func titleStyle() -> some View {
         self
             .font(Font.system(size: 22, weight: .bold))
-            .foregroundColor(Color.appTextPrimary)
+            .foregroundColor(Color.themeTextPrimary)
     }
     
     func headlineStyle() -> some View {
         self
             .font(Font.system(size: 20, weight: .semibold))
-            .foregroundColor(Color.appTextPrimary)
+            .foregroundColor(Color.themeTextPrimary)
     }
     
     func bodyStyle() -> some View {
         self
             .font(Font.system(size: 15))
-            .foregroundColor(Color.appTextPrimary)
+            .foregroundColor(Color.themeTextPrimary)
     }
     
     func captionStyle() -> some View {
         self
             .font(Font.system(size: 12))
-            .foregroundColor(Color.appTextSecondary)
+            .foregroundColor(Color.themeTextSecondary)
     }
     
     func buttonTextStyle() -> some View {
@@ -45,6 +45,6 @@ extension Text {
     func accentButtonTextStyle() -> some View {
         self
             .font(Font.system(size: 15, weight: .semibold))
-            .foregroundColor(Color.appAccent)
+            .foregroundColor(Color.themeAccent)
     }
 }
