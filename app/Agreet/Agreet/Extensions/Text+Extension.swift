@@ -3,50 +3,48 @@ import SwiftUI
 extension Text {
     func primaryTextStyle() -> some View {
         self
-            .foregroundColor(.textPrimary)
+            .foregroundColor(Color.appTextPrimary)
     }
     
     func secondaryTextStyle() -> some View {
         self
-            .foregroundColor(.textSecondary)
+            .foregroundColor(Color.appTextSecondary)
     }
     
     func titleStyle() -> some View {
         self
-            .font(.title2)
-            .foregroundColor(.textPrimary)
-            .fontWeight(.bold)
+            .font(Font.system(size: 22, weight: .bold))
+            .foregroundColor(Color.appTextPrimary)
     }
     
     func headlineStyle() -> some View {
         self
-            .font(.title3)
-            .foregroundColor(.textPrimary)
-            .fontWeight(.semibold)
+            .font(Font.system(size: 20, weight: .semibold))
+            .foregroundColor(Color.appTextPrimary)
     }
     
     func bodyStyle() -> some View {
         self
-            .font(.bodyMedium)
-            .foregroundColor(.textPrimary)
+            .font(Font.system(size: 15))
+            .foregroundColor(Color.appTextPrimary)
     }
     
     func captionStyle() -> some View {
         self
-            .font(.caption)
-            .foregroundColor(.textSecondary)
+            .font(Font.system(size: 12))
+            .foregroundColor(Color.appTextSecondary)
     }
     
     func buttonTextStyle() -> some View {
         self
-            .font(.buttonMedium)
+            .font(Font.system(size: 15, weight: .semibold))
             .foregroundColor(.white)
     }
     
     // Alternative button style using accent color
     func accentButtonTextStyle() -> some View {
         self
-            .font(.buttonMedium)
-            .foregroundColor(.accentColor)
+            .font(Font.system(size: 15, weight: .semibold))
+            .foregroundColor(Color.appAccent)
     }
 }
