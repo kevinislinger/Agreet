@@ -60,7 +60,7 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Set up authentication service
 - [x] Create session management service
 - [x] Create data models matching the backend schema
-- [ ] Implement push notification handling
+- [x] Implement push notification handling
 
 ### Step 3: Feature Implementation - Landing Screen
 - [ ] Create UI for Open Sessions list
