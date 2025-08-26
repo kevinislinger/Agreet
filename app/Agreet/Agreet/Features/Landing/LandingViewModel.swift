@@ -11,34 +11,59 @@ class LandingViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let sessionService = SessionService.shared
     
+    // Flag to prevent duplicate fetches
+    private var initialFetchCompleted = false
+    
     init() {
-        Task { @MainActor in
-            await fetchSessions()
-        }
+        // Don't fetch in init - let the view's onAppear handle it
     }
+    
+    // Task to track ongoing fetch operations
+    private var fetchTask: Task<Void, Never>?
     
     @MainActor
     func fetchSessions() async {
-        isLoading = true
-        errorMessage = nil
+        // For manually triggered refreshes (like pull-to-refresh), always fetch
+        // For automatic fetches (like onAppear), only fetch if we haven't already
+        let isManualRefresh = Task.isCancelled == false && isLoading == false
         
-        // Fetch open and closed sessions
-        let openResult = await sessionService.refreshOpenSessions()
-        let closedResult = await sessionService.refreshClosedSessions()
-        
-        if !openResult || !closedResult {
-            if let error = sessionService.error {
-                errorMessage = "Failed to fetch sessions: \(error.localizedDescription)"
-            } else {
-                errorMessage = "Failed to fetch sessions"
-            }
+        if !isManualRefresh && initialFetchCompleted {
+            // Skip duplicate automatic fetches
+            return
         }
         
-        // Get data from the session service
-        self.openSessions = sessionService.openSessions
-        self.closedSessions = sessionService.closedSessions
+        // Cancel any ongoing fetch operation
+        fetchTask?.cancel()
         
-        isLoading = false
+        // Create a new fetch task
+        fetchTask = Task { @MainActor in
+            isLoading = true
+            errorMessage = nil
+            
+            // Authentication should already be complete since ContentView
+            // only shows LandingView when auth is done
+            
+            // Fetch the sessions with error handling
+            let openResult = await sessionService.refreshOpenSessions()
+            let closedResult = await sessionService.refreshClosedSessions()
+            
+            // Only update UI if the task wasn't cancelled
+            if !Task.isCancelled {
+                if !openResult || !closedResult {
+                    if let error = sessionService.error {
+                        errorMessage = "Failed to fetch sessions: \(error.localizedDescription)"
+                    } else {
+                        errorMessage = "Failed to fetch sessions"
+                    }
+                }
+                
+                // Get data from the session service
+                self.openSessions = sessionService.openSessions
+                self.closedSessions = sessionService.closedSessions
+                isLoading = false
+                initialFetchCompleted = true
+            }
+        }
     }
     
     // Set a session as current in the SessionService

@@ -17,10 +17,97 @@ class AuthService: ObservableObject {
     /// Authentication error state
     @Published private(set) var authError: Error?
     
+    // Published property to track if initial auth check has completed
+    @Published private(set) var isInitialized = false
+    
+    // Task to track ongoing authentication
+    private var authTask: Task<Void, Never>?
+    
+    // Actor for thread-safe access to authentication state
+    private actor AuthState {
+        var isAuthenticating = false
+        
+        func startAuthenticating() -> Bool {
+            if isAuthenticating {
+                return false
+            }
+            isAuthenticating = true
+            return true
+        }
+        
+        func finishAuthenticating() {
+            isAuthenticating = false
+        }
+    }
+    
+    private let authState = AuthState()
+    
+    // Completion handler for waiting for auth to complete
+    private var authCompletion = PassthroughSubject<Bool, Never>()
+    
     private init() {
-        // Check for existing session at launch
-        Task {
-            await checkSession()
+        // Start authentication process on init
+        startAuthenticationProcess()
+    }
+    
+    private func startAuthenticationProcess() {
+        // Cancel any existing auth task
+        authTask?.cancel()
+        
+        // Create a new auth task
+        authTask = Task {
+            do {
+                print("Starting authentication process")
+                await checkSession()
+                try await performAuthenticationIfNeeded()
+                
+                // Mark as initialized only after successful auth
+                await MainActor.run {
+                    self.isInitialized = true
+                    print("Authentication completed successfully")
+                    self.authCompletion.send(true)
+                }
+            } catch {
+                print("Authentication process failed: \(error.localizedDescription)")
+                
+                // Try again after a delay if task wasn't cancelled
+                if !(error is CancellationError) {
+                    try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
+                    startAuthenticationProcess()  // Retry
+                }
+            }
+        }
+    }
+    
+    /// Returns a publisher that completes when authentication is done
+    var authenticationCompleted: AnyPublisher<Bool, Never> {
+        return authCompletion.eraseToAnyPublisher()
+    }
+    
+    /// Ensures the user is authenticated, preventing concurrent attempts
+    func performAuthenticationIfNeeded() async throws {
+        if !isAuthenticated {
+            // Try to start authentication using our actor for thread safety
+            if await authState.startAuthenticating() {
+                // We got permission to authenticate
+                do {
+                    // Use defer to ensure we always mark auth as finished
+                    defer {
+                        Task {
+                            // Need to use Task because await in defer is not allowed
+                            await authState.finishAuthenticating()
+                        }
+                    }
+                    
+                    print("Performing authentication")
+                    try await signInAnonymously()
+                }
+            } else {
+                // Another auth attempt is already in progress, wait for it
+                print("Auth already in progress, waiting...")
+                try await Task.sleep(nanoseconds: 100_000_000)
+                return try await performAuthenticationIfNeeded()
+            }
         }
     }
     

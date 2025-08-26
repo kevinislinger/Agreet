@@ -80,9 +80,6 @@ class NetworkService {
     /// - Throws: NetworkError if the request fails
     func fetchOpenSessions() async throws -> [Session] {
         do {
-            // Make sure user is authenticated before making the request
-            try await AuthService.shared.signInAnonymously()
-            
             // Ensure user is authenticated
             guard AuthService.shared.currentUser != nil else {
                 throw NetworkError.unauthorized
@@ -108,9 +105,6 @@ class NetworkService {
     /// - Throws: NetworkError if the request fails
     func fetchClosedSessions() async throws -> [Session] {
         do {
-            // Make sure user is authenticated before making the request
-            try await AuthService.shared.signInAnonymously()
-            
             // Ensure user is authenticated
             guard AuthService.shared.currentUser != nil else {
                 throw NetworkError.unauthorized

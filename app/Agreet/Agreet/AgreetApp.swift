@@ -17,18 +17,7 @@ struct AgreetApp: App {
     // App delegate for push notifications
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
     
-    init() {
-        // Perform initial setup
-        Task {
-            do {
-                // Attempt to sign in anonymously if needed when the app launches
-                try await AuthService.shared.signInAnonymously()
-            } catch {
-                print("Initial sign-in failed: \(error.localizedDescription)")
-                // Error is already handled in AuthService
-            }
-        }
-    }
+    // No custom init needed - AuthService handles authentication automatically
     
     var body: some Scene {
         WindowGroup {

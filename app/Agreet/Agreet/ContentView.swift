@@ -6,13 +6,38 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ContentView: View {
     @EnvironmentObject var authService: AuthService
+    @State private var isAuthComplete = false
+    
+    // Store subscription to prevent it from being canceled
+    @State private var subscription: AnyCancellable?
     
     var body: some View {
         Group {
-            if authService.isAuthenticated {
+            if !isAuthComplete {
+                // Loading view while waiting for auth initialization
+                VStack {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                        .padding()
+                    Text("Initializing...")
+                        .foregroundColor(Color.themeTextSecondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.themeBackground)
+                .onAppear {
+                    // Subscribe to auth completion
+                    subscription = authService.authenticationCompleted
+                        .receive(on: RunLoop.main)
+                        .sink { _ in
+                            // Only show content when auth is fully complete
+                            isAuthComplete = true
+                        }
+                }
+            } else if authService.isAuthenticated {
                 LandingView()
             } else {
                 AuthView()

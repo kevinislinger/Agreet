@@ -9,21 +9,20 @@ struct LandingView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                RefreshableScrollView(action: {
-                    await refreshSessions()
-                }) {
-                    VStack(spacing: 24) {
-                        openSessionsSection
-                        
-                        closedSessionsSection
-                        
-                        if viewModel.isLoading {
-                            ProgressView()
-                                .padding()
-                        }
+                VStack(spacing: 24) {
+                    openSessionsSection
+                    
+                    closedSessionsSection
+                    
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .padding()
                     }
-                    .padding(.horizontal)
                 }
+                .padding(.horizontal)
+            }
+            .refreshable {
+                await viewModel.fetchSessions()
             }
             .navigationTitle("Agreet")
             .toolbar {
@@ -42,8 +41,24 @@ struct LandingView: View {
             .sheet(isPresented: $showingStartSession) {
                 StartSessionView()
             }
+            .onChange(of: showingStartSession) { oldValue, newValue in
+                // When sheet is dismissed (changes from true to false), refresh sessions
+                if oldValue && !newValue {
+                    Task {
+                        await viewModel.fetchSessions()
+                    }
+                }
+            }
             .sheet(isPresented: $showingJoinSession) {
                 JoinSessionView()
+            }
+            .onChange(of: showingJoinSession) { oldValue, newValue in
+                // When sheet is dismissed (changes from true to false), refresh sessions
+                if oldValue && !newValue {
+                    Task {
+                        await viewModel.fetchSessions()
+                    }
+                }
             }
             .sheet(item: $selectedSession) { session in
                 // Detail view for session will go here
@@ -66,6 +81,7 @@ struct LandingView: View {
                 )
             }
             .onAppear {
+                // Refresh sessions whenever the view appears
                 Task {
                     await viewModel.fetchSessions()
                 }
