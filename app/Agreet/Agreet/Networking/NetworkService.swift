@@ -80,31 +80,24 @@ class NetworkService {
     /// - Throws: NetworkError if the request fails
     func fetchOpenSessions() async throws -> [Session] {
         do {
-            // Ensure we have a user ID
-            guard let userId = AuthService.shared.currentUser?.id else {
+            // Make sure user is authenticated before making the request
+            try await AuthService.shared.signInAnonymously()
+            
+            // Ensure user is authenticated
+            guard AuthService.shared.currentUser != nil else {
                 throw NetworkError.unauthorized
             }
             
-            // Query for sessions where:
-            // 1. The user is a participant (joined via session_participants)
-            // 2. The session status is 'open'
+            // Query for sessions where the user is a participant AND status is open
+            // Due to RLS, we can simply query for open sessions - RLS will filter for user's sessions
             let response: PostgrestResponse<[Session]> = try await supabase.supabase
                 .from("sessions")
                 .select("*, session_participants(*)")
                 .eq("status", value: "open")
                 .execute()
             
-            let allSessions = try handleArrayResponse(response, as: [Session].self)
-            
-            // Filter to only include sessions where the user is a participant
-            // This filtering should ideally be done on the server, but we're doing it here for simplicity
-            return allSessions.filter { session in
-                // Check if this user is a participant in this session
-                if let participants = session.participants {
-                    return participants.contains { $0.userId == userId }
-                }
-                return false
-            }
+            let sessions = try handleArrayResponse(response, as: [Session].self)
+            return sessions
         } catch {
             throw handleError(error)
         }
@@ -115,29 +108,24 @@ class NetworkService {
     /// - Throws: NetworkError if the request fails
     func fetchClosedSessions() async throws -> [Session] {
         do {
-            // Ensure we have a user ID
-            guard let userId = AuthService.shared.currentUser?.id else {
+            // Make sure user is authenticated before making the request
+            try await AuthService.shared.signInAnonymously()
+            
+            // Ensure user is authenticated
+            guard AuthService.shared.currentUser != nil else {
                 throw NetworkError.unauthorized
             }
             
-            // Query for sessions where:
-            // 1. The user is a participant
-            // 2. The session status is 'matched' or 'closed'
+            // Query for sessions where the user is a participant AND status is matched or closed
+            // Due to RLS, we can simply query for matched/closed sessions - RLS will filter for user's sessions
             let response: PostgrestResponse<[Session]> = try await supabase.supabase
                 .from("sessions")
                 .select("*, session_participants(*)")
                 .in("status", values: ["matched", "closed"])
                 .execute()
             
-            let allSessions = try handleArrayResponse(response, as: [Session].self)
-            
-            // Filter to only include sessions where the user is a participant
-            return allSessions.filter { session in
-                if let participants = session.participants {
-                    return participants.contains { $0.userId == userId }
-                }
-                return false
-            }
+            let sessions = try handleArrayResponse(response, as: [Session].self)
+            return sessions
         } catch {
             throw handleError(error)
         }

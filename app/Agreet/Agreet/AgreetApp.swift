@@ -20,8 +20,13 @@ struct AgreetApp: App {
     init() {
         // Perform initial setup
         Task {
-            // Attempt to sign in anonymously if needed when the app launches
-            await AuthService.shared.signInAnonymously()
+            do {
+                // Attempt to sign in anonymously if needed when the app launches
+                try await AuthService.shared.signInAnonymously()
+            } catch {
+                print("Initial sign-in failed: \(error.localizedDescription)")
+                // Error is already handled in AuthService
+            }
         }
     }
     

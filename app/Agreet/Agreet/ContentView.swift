@@ -49,7 +49,11 @@ struct AuthView: View {
                 
                 Button {
                     Task {
-                        await authService.signInAnonymously()
+                        do {
+                            try await authService.signInAnonymously()
+                        } catch {
+                            // Error is already handled in the service
+                        }
                     }
                 } label: {
                     Text("Continue Anonymously")

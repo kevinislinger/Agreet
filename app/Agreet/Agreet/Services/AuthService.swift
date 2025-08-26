@@ -39,7 +39,7 @@ class AuthService: ObservableObject {
     
     /// Signs in anonymously and updates authentication state
     @MainActor
-    func signInAnonymously() async {
+    func signInAnonymously() async throws {
         do {
             // Use the existing method from SupabaseService but mark as throwing
             try await supabase.signInAnonymouslyIfNeeded()
@@ -55,6 +55,7 @@ class AuthService: ObservableObject {
             currentUser = nil
             authError = error
             print("Error signing in anonymously: \(error)")
+            throw error
         }
     }
     
