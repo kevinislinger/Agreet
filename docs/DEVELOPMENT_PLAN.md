@@ -72,10 +72,10 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Document color usage guidelines for consistency across features
 
 ### Step 4: Feature Implementation - Landing Screen
-- [ ] Create UI for Open Sessions list
-- [ ] Implement session refresh logic
-- [ ] Add navigation to Start Session and Join Session
-- [ ] Implement session cell UI components
+- [x] Create UI for Open Sessions list
+- [x] Implement session refresh logic
+- [x] Add navigation to Start Session and Join Session
+- [x] Implement session cell UI components
 
 ### Step 5: Feature Implementation - Session Management
 - [ ] Implement Start Session flow
