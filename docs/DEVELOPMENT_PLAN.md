@@ -62,13 +62,22 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Create data models matching the backend schema
 - [x] Implement push notification handling
 
-### Step 3: Feature Implementation - Landing Screen
+### Step 3: Color Palette Implementation
+- [x] Create color assets in Asset Catalog
+- [x] Define accent, secondary, tertiary, and background colors
+- [x] Create semantic color names for UI elements (e.g buttonBackground, cardBackground)
+- [x] Create Color extension for SwiftUI access
+- [x] Implement dark mode variants for all colors
+- [x] Create typography styles that complement the color palette
+- [x] Document color usage guidelines for consistency across features
+
+### Step 4: Feature Implementation - Landing Screen
 - [ ] Create UI for Open Sessions list
 - [ ] Implement session refresh logic
 - [ ] Add navigation to Start Session and Join Session
 - [ ] Implement session cell UI components
 
-### Step 4: Feature Implementation - Session Management
+### Step 5: Feature Implementation - Session Management
 - [ ] Implement Start Session flow
 - [ ] Category selection UI
 - [ ] Quorum setting UI
@@ -78,24 +87,24 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [ ] Session validation logic
 - [ ] Error handling for full or closed sessions
 
-### Step 5: Feature Implementation - Swipe Deck
+### Step 6: Feature Implementation - Swipe Deck
 - [ ] Create card UI for options
 - [ ] Implement swipe gestures and animations
 - [ ] Add like/dislike functionality
 - [ ] Connect to backend for recording likes
 - [ ] Implement match detection and navigation
 
-### Step 6: Feature Implementation - Results & History
+### Step 7: Feature Implementation - Results & History
 - [ ] Create Results screen showing matched option
 - [ ] Implement Closed Sessions list
 - [ ] Add session history viewing functionality
 
-### Step 7: Settings & Profile
+### Step 8: Settings & Profile
 - [ ] Implement username setting
 - [ ] Add push notification preferences
 - [ ] Create user profile management
 
-### Step 8: Polish and Testing
+### Step 9: Polish and Testing
 - [ ] Add app icons and splash screen
 - [ ] Implement error handling and retry mechanisms
 - [ ] Add loading states and animations
