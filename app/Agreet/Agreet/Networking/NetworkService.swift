@@ -89,7 +89,7 @@ class NetworkService {
             // Due to RLS, we can simply query for open sessions - RLS will filter for user's sessions
             let response: PostgrestResponse<[Session]> = try await supabase.supabase
                 .from("sessions")
-                .select("*, session_participants(*)")
+                .select("*, session_participants(*), categories(*)") // Include categories data
                 .eq("status", value: "open")
                 .execute()
             
@@ -114,7 +114,7 @@ class NetworkService {
             // Due to RLS, we can simply query for matched/closed sessions - RLS will filter for user's sessions
             let response: PostgrestResponse<[Session]> = try await supabase.supabase
                 .from("sessions")
-                .select("*, session_participants(*)")
+                .select("*, session_participants(*), categories(*)") // Include categories data
                 .in("status", values: ["matched", "closed"])
                 .execute()
             

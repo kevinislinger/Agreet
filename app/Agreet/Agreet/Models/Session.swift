@@ -17,6 +17,7 @@ struct Session: Codable, Identifiable, Equatable {
     let createdAt: Date
     var participants: [SessionParticipant]?
     var matchedOption: Option?
+    var category: Category?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -29,6 +30,7 @@ struct Session: Codable, Identifiable, Equatable {
         case createdAt = "created_at"
         case participants = "session_participants"
         case matchedOption = "options" // For joined queries that include the matched option
+        case category = "categories" // For joined queries that include the category
     }
     
     // Custom decoder initialization to handle date format from Supabase
@@ -65,5 +67,6 @@ struct Session: Codable, Identifiable, Equatable {
         // Decode relationships if present
         participants = try container.decodeIfPresent([SessionParticipant].self, forKey: .participants)
         matchedOption = try container.decodeIfPresent(Option.self, forKey: .matchedOption)
+        category = try container.decodeIfPresent(Category.self, forKey: .category)
     }
 }

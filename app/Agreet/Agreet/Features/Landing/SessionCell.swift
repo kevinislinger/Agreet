@@ -18,8 +18,7 @@ struct SessionCell: View {
             }
             
             VStack(alignment: .leading, spacing: 4) {
-                // Using a placeholder since we don't have category data yet
-                Text("Category")
+                Text(getCategoryName())
                     .font(Font.system(size: 16, weight: .semibold))
                     .foregroundColor(Color.themeTextPrimary)
                 
@@ -73,8 +72,18 @@ struct SessionCell: View {
     
     // Helper computed properties
     private var categoryInitial: String {
-        // Placeholder until we have category data
-        return "C"
+        let name = getCategoryName()
+        return String(name.prefix(1))
+    }
+    
+    private func getCategoryName() -> String {
+        // Get the category name from the relationship
+        if let category = session.category {
+            return category.name
+        }
+        
+        // Fallback to looking up by categoryId if the relationship is missing
+        return "Category"
     }
     
     private var formattedUpdatedTime: String {
