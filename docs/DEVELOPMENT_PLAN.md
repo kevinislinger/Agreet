@@ -78,14 +78,14 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Implement session cell UI components
 
 ### Step 5: Feature Implementation - Session Management
-- [ ] Implement Start Session flow
-- [ ] Category selection UI
-- [ ] Quorum setting UI
-- [ ] Invite code generation and sharing
-- [ ] Implement Join Session flow
-- [ ] Invite code input UI
-- [ ] Session validation logic
-- [ ] Error handling for full or closed sessions
+- [x] Implement Start Session flow
+- [x] Category selection UI
+- [x] Quorum setting UI
+- [x] Invite code generation and sharing
+- [x] Implement Join Session flow
+- [x] Invite code input UI
+- [x] Session validation logic
+- [x] Error handling for full or closed sessions
 
 ### Step 6: Feature Implementation - Swipe Deck
 - [ ] Create card UI for options

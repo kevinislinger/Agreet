@@ -40,12 +40,10 @@ struct LandingView: View {
                 bottomButtons
             }
             .sheet(isPresented: $showingStartSession) {
-                // Start Session view will go here
-                Text("Start Session")
+                StartSessionView()
             }
             .sheet(isPresented: $showingJoinSession) {
-                // Join Session view will go here
-                Text("Join Session")
+                JoinSessionView()
             }
             .sheet(item: $selectedSession) { session in
                 // Detail view for session will go here

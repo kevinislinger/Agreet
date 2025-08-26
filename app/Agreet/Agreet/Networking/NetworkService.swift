@@ -141,22 +141,31 @@ class NetworkService {
     /// - Throws: NetworkError if the request fails
     func createSession(categoryId: UUID, quorum: Int) async throws -> Session {
         do {
-            // Ensure we have a user ID
-            guard let userId = AuthService.shared.currentUser?.id else {
+            // Ensure user is authenticated
+            guard AuthService.shared.currentUser != nil else {
                 throw NetworkError.unauthorized
+            }
+            
+            // Define a temporary structure to decode the simplified response
+            struct CreateSessionResponse: Decodable {
+                let session_id: UUID
+                let invite_code: String
+                let created_at: String
             }
             
             // Create the session using RPC (Remote Procedure Call)
             // This will create the session, generate an invite code, and add the creator as a participant
-            let response: PostgrestResponse<Session> = try await supabase.supabase
+            let response: PostgrestResponse<CreateSessionResponse> = try await supabase.supabase
                 .rpc("create_session", params: [
                     "p_category_id": categoryId.uuidString,
-                    "p_creator_id": userId.uuidString,
                     "p_quorum_n": String(quorum)
                 ])
                 .execute()
             
-            return try handleResponse(response, as: Session.self)
+            let createResponse = try handleResponse(response, as: CreateSessionResponse.self)
+            
+            // Now fetch the full session using the returned session_id
+            return try await getSession(id: createResponse.session_id)
         } catch {
             throw handleError(error)
         }
