@@ -176,44 +176,79 @@ class NetworkService {
                 throw NetworkError.unauthorized
             }
             
-            // First, find the session with this invite code
-            let findResponse: PostgrestResponse<[Session]> = try await supabase.supabase
-                .from("sessions")
-                .select()
-                .eq("invite_code", value: inviteCode)
-                .limit(1)
-                .execute()
-            
-            let sessions = try handleArrayResponse(findResponse, as: [Session].self)
-            guard let session = sessions.first else {
-                throw NetworkError.notFound(message: "No session found with this invite code")
-            }
-            
-            // Check if the session is open
-            guard session.status == "open" else {
-                if session.status == "matched" {
-                    throw NetworkError.sessionAlreadyMatched
-                } else {
-                    throw NetworkError.sessionClosed
+            // Create a struct to decode the successful response
+            struct JoinSessionResponse: Decodable {
+                let success: Bool
+                let session: SessionData?
+                let error: String?
+                let message: String?
+                
+                struct SessionData: Decodable {
+                    let id: UUID
+                    let status: String
+                    let creator_id: UUID
+                    let category_id: UUID
+                    let quorum_n: Int
+                    let matched_option_id: UUID?
+                    let invite_code: String
+                    let created_at: String
+                    let category: CategoryData?
+                    
+                    struct CategoryData: Decodable {
+                        let id: UUID
+                        let name: String
+                        let icon_url: String?
+                    }
                 }
             }
             
-            // Join the session by inserting into session_participants
-            let joinResponse = try await supabase.supabase
-                .from("session_participants")
-                .insert([
-                    "session_id": session.id.uuidString,
-                    "user_id": userId.uuidString
+            // Call the RPC function that handles both finding and joining the session
+            let joinResponse: PostgrestResponse<JoinSessionResponse> = try await supabase.supabase
+                .rpc("join_session_by_invite_code", params: [
+                    "p_invite_code": inviteCode,
+                    "p_user_id": userId.uuidString
                 ])
                 .execute()
             
-            guard joinResponse.status >= 200 && joinResponse.status < 300 else {
-                if joinResponse.status == 409 {
+            // Parse the response
+            let joinResult = try handleResponse(joinResponse, as: JoinSessionResponse.self)
+            
+            // Handle error responses
+            guard joinResult.success, let sessionData = joinResult.session else {
+                if joinResult.error == "not_found" {
+                    throw NetworkError.notFound(message: joinResult.message ?? "No session found with this invite code")
+                } else if joinResult.error == "session_matched" {
+                    throw NetworkError.sessionAlreadyMatched
+                } else if joinResult.error == "session_closed" {
+                    throw NetworkError.sessionClosed
+                } else if joinResult.error == "already_joined" {
                     throw NetworkError.alreadyJoined
+                } else if joinResult.error == "session_full" {
+                    throw NetworkError.sessionFull
                 } else {
-                    throw NetworkError.serverError(statusCode: joinResponse.status, message: "Failed to join session")
+                    throw NetworkError.unknown(message: joinResult.message ?? "Failed to join session")
                 }
             }
+            
+            // Create a session object from the response
+            var category: Category? = nil
+            if let categoryData = sessionData.category {
+                category = Category(id: categoryData.id, name: categoryData.name, iconUrl: categoryData.icon_url)
+            }
+            
+            let session = Session(
+                id: sessionData.id,
+                creatorId: sessionData.creator_id,
+                categoryId: sessionData.category_id,
+                quorumN: sessionData.quorum_n,
+                status: sessionData.status,
+                matchedOptionId: sessionData.matched_option_id,
+                inviteCode: sessionData.invite_code,
+                createdAt: ISO8601DateFormatter().date(from: sessionData.created_at) ?? Date(),
+                participants: nil,
+                matchedOption: nil,
+                category: category
+            )
             
             // Fetch the full session details after joining
             return try await getSession(id: session.id)

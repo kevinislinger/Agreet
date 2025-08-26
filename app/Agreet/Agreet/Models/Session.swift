@@ -69,4 +69,19 @@ struct Session: Codable, Identifiable, Equatable {
         matchedOption = try container.decodeIfPresent(Option.self, forKey: .matchedOption)
         category = try container.decodeIfPresent(Category.self, forKey: .category)
     }
+    
+    // Convenience initializer for manual creation (needed for joining session by invite code)
+    init(id: UUID, creatorId: UUID, categoryId: UUID, quorumN: Int, status: String, matchedOptionId: UUID?, inviteCode: String, createdAt: Date, participants: [SessionParticipant]?, matchedOption: Option?, category: Category?) {
+        self.id = id
+        self.creatorId = creatorId
+        self.categoryId = categoryId
+        self.quorumN = quorumN
+        self.status = status
+        self.matchedOptionId = matchedOptionId
+        self.inviteCode = inviteCode
+        self.createdAt = createdAt
+        self.participants = participants
+        self.matchedOption = matchedOption
+        self.category = category
+    }
 }
