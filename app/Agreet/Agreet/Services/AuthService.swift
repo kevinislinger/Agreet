@@ -117,7 +117,15 @@ class AuthService: ObservableObject {
         // Check if user is already signed in
         if let session = try? await supabase.supabase.auth.session, session.isExpired == false {
             isAuthenticated = true
-            await fetchCurrentUser()
+            let userFetched = await fetchCurrentUser()
+            
+            // If session is valid but user doesn't exist in database (e.g., user was deleted on backend),
+            // we need to sign out and start fresh
+            if !userFetched {
+                print("Valid session found but user doesn't exist in database. Signing out and starting fresh.")
+                await signOut()
+                // The authentication process will retry and create a new anonymous session
+            }
         } else {
             isAuthenticated = false
             currentUser = nil
@@ -135,7 +143,13 @@ class AuthService: ObservableObject {
             isAuthenticated = true
             
             // Fetch user details
-            await fetchCurrentUser()
+            let userFetched = await fetchCurrentUser()
+            
+            // If user fetch failed after successful sign-in, something is wrong
+            if !userFetched {
+                print("Warning: Anonymous sign-in succeeded but user fetch failed")
+                // Don't throw here as the sign-in was successful, just log the warning
+            }
             
         } catch {
             isAuthenticated = false
@@ -160,12 +174,13 @@ class AuthService: ObservableObject {
     }
     
     /// Fetches the current user's profile from the database
+    /// Returns true if user was successfully fetched, false otherwise
     @MainActor
-    private func fetchCurrentUser() async {
+    private func fetchCurrentUser() async -> Bool {
         do {
             guard let authUser = try? await supabase.supabase.auth.user() else {
                 print("No authenticated user found")
-                return
+                return false
             }
             
             // Fetch the user profile from the database using the auth user's ID
@@ -181,14 +196,18 @@ class AuthService: ObservableObject {
                 if !data.isEmpty {
                     let user = try JSONDecoder().decode(User.self, from: data)
                     self.currentUser = user
+                    return true
                 } else {
                     print("No user data returned from the database")
+                    return false
                 }
             } catch {
                 print("Failed to decode user data: \(error)")
+                return false
             }
         } catch {
             print("Error fetching user profile: \(error)")
+            return false
         }
     }
     

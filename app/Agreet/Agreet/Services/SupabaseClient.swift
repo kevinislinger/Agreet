@@ -25,6 +25,8 @@ class SupabaseService {
     func signInAnonymouslyIfNeeded() async throws {
         do {
             // user() validates the token on the server
+            let session = try await client.auth.session
+            print(session)
             _ = try await client.auth.user()
             print("User session is valid.")
         } catch {

@@ -284,15 +284,23 @@ class NetworkService {
     /// - Throws: NetworkError if the request fails
     func fetchSessionOptions(sessionId: UUID) async throws -> [Option] {
         do {
+            // Define a nested structure to handle the response format
+            struct SessionOptionResponse: Decodable {
+                let options: Option
+            }
+            
             // Join session_options and options tables to get all options for this session
-            let response: PostgrestResponse<[Option]> = try await supabase.supabase
+            let response: PostgrestResponse<[SessionOptionResponse]> = try await supabase.supabase
                 .from("session_options")
                 .select("options(*)")
                 .eq("session_id", value: sessionId.uuidString)
                 .execute()
             
             // Extract options from the nested response
-            return try handleArrayResponse(response, as: [Option].self)
+            let sessionOptions = try handleArrayResponse(response, as: [SessionOptionResponse].self)
+            
+            // Map to just the options
+            return sessionOptions.map { $0.options }
         } catch {
             throw handleError(error)
         }
