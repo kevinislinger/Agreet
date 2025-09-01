@@ -278,29 +278,19 @@ class NetworkService {
     
     // MARK: - Options API
     
-    /// Fetches options for a specific session
-    /// - Parameter sessionId: The session ID
-    /// - Returns: An array of options for the session
+    /// Fetches options for a specific category
+    /// - Parameter categoryId: The category ID
+    /// - Returns: An array of options for the category
     /// - Throws: NetworkError if the request fails
-    func fetchSessionOptions(sessionId: UUID) async throws -> [Option] {
+    func fetchOptionsForCategory(categoryId: UUID) async throws -> [Option] {
         do {
-            // Define a nested structure to handle the response format
-            struct SessionOptionResponse: Decodable {
-                let options: Option
-            }
-            
-            // Join session_options and options tables to get all options for this session
-            let response: PostgrestResponse<[SessionOptionResponse]> = try await supabase.supabase
-                .from("session_options")
-                .select("options(*)")
-                .eq("session_id", value: sessionId.uuidString)
+            let response: PostgrestResponse<[Option]> = try await supabase.supabase
+                .from("options")
+                .select()
+                .eq("category_id", value: categoryId.uuidString)
                 .execute()
             
-            // Extract options from the nested response
-            let sessionOptions = try handleArrayResponse(response, as: [SessionOptionResponse].self)
-            
-            // Map to just the options
-            return sessionOptions.map { $0.options }
+            return try handleArrayResponse(response, as: [Option].self)
         } catch {
             throw handleError(error)
         }

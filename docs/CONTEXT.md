@@ -91,10 +91,11 @@ Implementation:
 | `sessions` | id, creator_id, category_id (fk), quorum_n, status (open/matched/closed), matched_option_id, invite_code, created_at |
 | `session_participants` | session_id, user_id, joined_at (CHECK: participant_count(session_id) < quota at insert time) |
 | `options` | id, category_id (fk), label, image_url |
-| `session_options` | session_id, option_id, order_index |
 | `likes` | id, session_id, option_id, user_id, created_at |
 
 Indexes & RLS policies secure rows per `session_id` membership (also include a BEFORE INSERT trigger on `session_participants` that raises an exception when `SELECT COUNT(*) FROM session_participants WHERE session_id = NEW.session_id` >= `(SELECT quorum_n FROM sessions WHERE id = NEW.session_id)`).
+
+**Note**: Option ordering is randomized on the client side for each participant, ensuring each user sees options in a different random order.
 
 ---
 

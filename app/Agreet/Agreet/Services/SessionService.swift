@@ -168,7 +168,7 @@ class SessionService: ObservableObject {
         }
     }
     
-    /// Loads options for the current session
+    /// Loads options for the current session and randomizes them
     @MainActor
     func loadOptionsForCurrentSession() async {
         guard let currentSession = currentSession else {
@@ -177,7 +177,15 @@ class SessionService: ObservableObject {
         }
         
         do {
-            sessionOptions = try await networkService.fetchSessionOptions(sessionId: currentSession.id)
+            // Fetch options for the session's category
+            let options = try await networkService.fetchOptionsForCategory(categoryId: currentSession.categoryId)
+            
+            // Randomize the order on the client side
+            sessionOptions = options.shuffled()
+            
+            print("Loaded \(sessionOptions.count) options for session \(currentSession.id)")
+            print("First option: \(sessionOptions.first?.label ?? "none")")
+            print("Last option: \(sessionOptions.last?.label ?? "none")")
         } catch {
             self.error = error
             print("Error loading session options: \(error)")

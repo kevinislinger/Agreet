@@ -17,14 +17,15 @@ try await supabase.auth.signInAnonymously()
 
 Here's a summary of the database tables:
 
+**Note**: Option ordering is randomized on the client side for each participant, ensuring each user sees options in a different random order. This eliminates the need for a `session_options` table and improves performance.
+
 | Table | Primary Key | Description |
 |-------|-------------|-------------|
 | `users` | `id` (UUID) | Stores user profiles with usernames and push notification tokens |
 | `categories` | `id` (UUID) | Available categories for sessions (e.g., Restaurants, Movies) |
 | `sessions` | `id` (UUID) | Swiping sessions with status and configuration |
 | `session_participants` | `session_id`, `user_id` | Maps users to sessions they're participating in |
-| `options` | `id` (UUID) | Options within each category that users swipe on |
-| `session_options` | `session_id`, `option_id` | Maps options to sessions with ordering |
+| `options` | `id` (UUID) | Options within each category that users swipe on (ordering randomized client-side) |
 | `likes` | `id` (UUID) | Records when a user likes an option in a session |
 
 ## Database Functions
@@ -205,15 +206,15 @@ let response = try await supabase
 ### Get Session Options for Swiping
 
 ```swift
+// Get options for the session's category (client-side randomization)
 let response = try await supabase
-    .from("session_options")
-    .select("""
-        options!inner(id, label, image_url),
-        order_index
-    """)
-    .eq("session_id", sessionId)
-    .order("order_index")
+    .from("options")
+    .select("id, label, image_url")
+    .eq("category_id", session.categoryId)
     .execute()
+
+// Randomize the order on the client side
+let randomizedOptions = response.shuffled()
 ```
 
 ### Get Session Participants

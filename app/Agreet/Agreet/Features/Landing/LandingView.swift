@@ -18,6 +18,9 @@ struct LandingView: View {
                         ProgressView()
                             .padding()
                     }
+                    
+                    // Add spacing at the bottom to account for the fixed buttons
+                    Spacer(minLength: 80)
                 }
                 .padding(.horizontal)
             }
@@ -166,40 +169,50 @@ struct LandingView: View {
     }
     
     private var bottomButtons: some View {
-        HStack(spacing: 16) {
-            Button {
-                showingStartSession = true
-            } label: {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text("Start Session")
+        VStack(spacing: 0) {
+            // Main button area
+            HStack(spacing: 16) {
+                Button {
+                    showingStartSession = true
+                } label: {
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Start Session")
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.themeAccent)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.themeAccent)
-                .foregroundColor(.white)
-                .cornerRadius(12)
+                
+                Button {
+                    showingJoinSession = true
+                } label: {
+                    HStack {
+                        Image(systemName: "person.badge.plus.fill")
+                        Text("Join Session")
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.themeSecondary)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                }
             }
+            .padding()
             
-            Button {
-                showingJoinSession = true
-            } label: {
-                HStack {
-                    Image(systemName: "person.badge.plus.fill")
-                    Text("Join Session")
-                }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.themeSecondary)
-                .foregroundColor(.white)
-                .cornerRadius(12)
-            }
+            // Extend background to bottom of screen
+            Rectangle()
+                .fill(Color.themeBackground)
+                .frame(height: 0)
+                .ignoresSafeArea(.container, edges: .bottom)
         }
-        .padding()
         .background(
             Rectangle()
                 .fill(Color.themeBackground)
                 .shadow(color: Color.black.opacity(0.05), radius: 8, y: -4)
+                .ignoresSafeArea(.container, edges: .bottom)
         )
     }
     

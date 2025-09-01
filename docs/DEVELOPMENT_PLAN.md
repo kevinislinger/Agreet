@@ -15,7 +15,6 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Create `sessions` table (id, creator_id, category_id, quorum_n, status, matched_option_id, invite_code, created_at)
 - [x] Create `session_participants` table (session_id, user_id, joined_at)
 - [x] Create `options` table (id, category_id, label, image_url)
-- [x] Create `session_options` table (session_id, option_id, order_index)
 - [x] Create `likes` table (id, session_id, option_id, user_id, created_at)
 - [x] Set up foreign key constraints and indexes
 
