@@ -304,51 +304,29 @@ class NetworkService {
     /// - Throws: NetworkError if the request fails
     func likeOption(sessionId: UUID, optionId: UUID) async throws -> (matchFound: Bool, matchedOptionId: UUID?) {
         do {
-            // Ensure we have a user ID
-            guard let userId = AuthService.shared.currentUser?.id else {
-                throw NetworkError.unauthorized
+            // Define the response structure
+            struct LikeOptionResponse: Decodable {
+                let success: Bool
+                let match_found: Bool
+                let matched_option_id: String?
             }
             
-            // Instead of using the Edge Function directly, use the database API to insert a like
-            // This will trigger the database function that handles the matching logic
-            
-            // Create a proper Encodable struct for the insert
-            struct LikeInsert: Encodable {
-                let session_id: String
-                let option_id: String
-                let user_id: String
-            }
-            
-            // Create a Like object using our Encodable struct
-            let like = LikeInsert(
-                session_id: sessionId.uuidString,
-                option_id: optionId.uuidString,
-                user_id: userId.uuidString
+            // Call the like_option edge function
+            let response: LikeOptionResponse = try await supabase.supabase.functions.invoke(
+                "like_option",
+                options: FunctionInvokeOptions(
+                    body: [
+                        "session_id": sessionId.uuidString,
+                        "option_id": optionId.uuidString
+                    ]
+                )
             )
             
-            // Insert the like into the database
-            let insertResponse = try await supabase.supabase.from("likes")
-                .insert(like)
-                .execute()
+            // Parse the response
+            let matchFound = response.match_found
+            let matchedOptionId = response.matched_option_id.flatMap { UUID(uuidString: $0) }
             
-            // Check if insertion was successful
-            guard insertResponse.status >= 200 && insertResponse.status < 300 else {
-                throw NetworkError.serverError(statusCode: insertResponse.status, message: "Failed to record like")
-            }
-            
-            // After inserting the like, check if there's a match by querying the session
-            let sessionResponse: PostgrestResponse<Session> = try await supabase.supabase.from("sessions")
-                .select()
-                .eq("id", value: sessionId.uuidString)
-                .single()
-                .execute()
-            
-            let session = sessionResponse.value
-            
-            // If the session status is now "matched", then we have a match
-            let matchFound = session.status == "matched"
-            
-            return (matchFound, session.matchedOptionId)
+            return (matchFound, matchedOptionId)
         } catch {
             throw handleError(error)
         }

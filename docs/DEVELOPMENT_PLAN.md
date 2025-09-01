@@ -87,11 +87,11 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Error handling for full or closed sessions
 
 ### Step 6: Feature Implementation - Swipe Deck
-- [ ] Create card UI for options
-- [ ] Implement swipe gestures and animations
-- [ ] Add like/dislike functionality
-- [ ] Connect to backend for recording likes
-- [ ] Implement match detection and navigation
+- [x] Create card UI for options
+- [x] Implement swipe gestures and animations
+- [x] Add like/dislike functionality
+- [x] Connect to backend for recording likes
+- [x] Implement match detection and navigation
 
 ### Step 7: Feature Implementation - Results & History
 - [ ] Create Results screen showing matched option

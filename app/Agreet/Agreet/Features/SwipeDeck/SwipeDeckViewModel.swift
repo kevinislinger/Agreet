@@ -10,6 +10,7 @@ class SwipeDeckViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var matchFound = false
     @Published private(set) var matchedOptionId: UUID?
+    @Published private(set) var matchedOption: Option?
     @Published var showingError = false
     @Published var errorMessage: String?
     
@@ -37,7 +38,8 @@ class SwipeDeckViewModel: ObservableObject {
     }
     
     func handleSwipe(option: Option, direction: SwipeDirection) {
-        guard session != nil else { return }
+        // Prevent swiping if a match has been found
+        guard session != nil && !matchFound else { return }
         
         // Remove the swiped option from current options
         currentOptions.removeAll { $0.id == option.id }
@@ -88,6 +90,10 @@ class SwipeDeckViewModel: ObservableObject {
         if result.matchFound {
             matchFound = true
             matchedOptionId = result.matchedOptionId
+            matchedOption = option
+            
+            // Clear remaining options to prevent further swiping
+            currentOptions.removeAll()
             
             // Add success haptic feedback
             let notificationFeedback = UINotificationFeedbackGenerator()

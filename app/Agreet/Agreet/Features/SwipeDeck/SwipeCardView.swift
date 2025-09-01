@@ -4,6 +4,7 @@ struct SwipeCardView: View {
     let option: Option
     let isTopCard: Bool
     let onSwipe: (SwipeDirection) -> Void
+    let disabled: Bool
     
     @State private var offset = CGSize.zero
     @State private var rotation: Double = 0
@@ -11,6 +12,13 @@ struct SwipeCardView: View {
     
     private let cardWidth: CGFloat = UIScreen.main.bounds.width - 40
     private let cardHeight: CGFloat = UIScreen.main.bounds.height * 0.6
+    
+    init(option: Option, isTopCard: Bool, disabled: Bool = false, onSwipe: @escaping (SwipeDirection) -> Void) {
+        self.option = option
+        self.isTopCard = isTopCard
+        self.disabled = disabled
+        self.onSwipe = onSwipe
+    }
     
     var body: some View {
         ZStack {
@@ -121,10 +129,17 @@ struct SwipeCardView: View {
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                     
-                    Text("Swipe right to like, left to pass")
-                        .font(.caption)
-                        .foregroundColor(.themeTextSecondary)
-                        .multilineTextAlignment(.center)
+                    if disabled {
+                        Text("Session completed!")
+                            .font(.caption)
+                            .foregroundColor(.themeTextSecondary)
+                            .multilineTextAlignment(.center)
+                    } else {
+                        Text("Swipe right to like, left to pass")
+                            .font(.caption)
+                            .foregroundColor(.themeTextSecondary)
+                            .multilineTextAlignment(.center)
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
@@ -138,14 +153,14 @@ struct SwipeCardView: View {
         .gesture(
             DragGesture()
                 .onChanged { gesture in
-                    if isTopCard {
+                    if isTopCard && !disabled {
                         offset = gesture.translation
                         rotation = Double(gesture.translation.width / 20)
                         scale = 1.0 - abs(gesture.translation.width) / 1000
                     }
                 }
                 .onEnded { gesture in
-                    if isTopCard {
+                    if isTopCard && !disabled {
                         handleSwipeEnd(gesture)
                     }
                 }

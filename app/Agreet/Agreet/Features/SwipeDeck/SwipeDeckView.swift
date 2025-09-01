@@ -3,6 +3,7 @@ import SwiftUI
 struct SwipeDeckView: View {
     @StateObject private var viewModel = SwipeDeckViewModel()
     @Environment(\.dismiss) private var dismiss
+    @State private var showingResults = false
     
     let session: Session
     
@@ -20,14 +21,18 @@ struct SwipeDeckView: View {
                     // Main swipe deck area
                     if viewModel.isLoading {
                         loadingView
+                    } else if viewModel.matchFound {
+                        matchFoundView
                     } else if viewModel.currentOptions.isEmpty {
                         emptyStateView
                     } else {
                         swipeDeckArea
                     }
                     
-                    // Bottom toolbar
-                    bottomToolbar
+                    // Bottom toolbar (hidden when match is found)
+                    if !viewModel.matchFound {
+                        bottomToolbar
+                    }
                 }
             }
             .navigationBarHidden(true)
@@ -37,14 +42,21 @@ struct SwipeDeckView: View {
         }
         .onChange(of: viewModel.matchFound) { _, matchFound in
             if matchFound {
-                // Navigate to results
-                // This will be handled by the parent view
+                // Automatically show results after a short delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    showingResults = true
+                }
             }
         }
         .alert("Error", isPresented: $viewModel.showingError) {
             Button("OK") { }
         } message: {
             Text(viewModel.errorMessage ?? "An unknown error occurred")
+        }
+        .fullScreenCover(isPresented: $showingResults) {
+            if let matchedOption = viewModel.matchedOption {
+                ResultsView(session: session, matchedOption: matchedOption)
+            }
         }
     }
     
@@ -68,9 +80,16 @@ struct SwipeDeckView: View {
                         .font(.headline)
                         .foregroundColor(.themeTextPrimary)
                     
-                    Text("\(session.participantCount)/\(session.quorumN) participants")
-                        .font(.caption)
-                        .foregroundColor(.themeTextSecondary)
+                    if viewModel.matchFound {
+                        Text("Match Found! 🎉")
+                            .font(.caption)
+                            .foregroundColor(.themeMatchColor)
+                            .fontWeight(.semibold)
+                    } else {
+                        Text("\(session.participantCount)/\(session.quorumN) participants")
+                            .font(.caption)
+                            .foregroundColor(.themeTextSecondary)
+                    }
                 }
                 
                 Spacer()
@@ -85,10 +104,12 @@ struct SwipeDeckView: View {
             }
             .padding(.horizontal)
             
-            // Progress indicator
-            ProgressView(value: Double(viewModel.optionsRemaining), total: Double(viewModel.totalOptions))
-                .progressViewStyle(LinearProgressViewStyle(tint: .themeAccent))
-                .padding(.horizontal)
+            // Progress indicator (hidden when match is found)
+            if !viewModel.matchFound {
+                ProgressView(value: Double(viewModel.optionsRemaining), total: Double(viewModel.totalOptions))
+                    .progressViewStyle(LinearProgressViewStyle(tint: .themeAccent))
+                    .padding(.horizontal)
+            }
         }
         .padding(.top)
         .background(Color.themeCardBackground)
@@ -103,6 +124,76 @@ struct SwipeDeckView: View {
                 .font(.body)
                 .foregroundColor(.themeTextSecondary)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    private var matchFoundView: some View {
+        VStack(spacing: 24) {
+            // Success animation
+            ZStack {
+                Circle()
+                    .fill(Color.themeMatchColor)
+                    .frame(width: 120, height: 120)
+                
+                Image(systemName: "checkmark")
+                    .font(.system(size: 60, weight: .bold))
+                    .foregroundColor(.white)
+            }
+            .scaleEffect(1.0)
+            .animation(.spring(response: 0.6, dampingFraction: 0.6), value: viewModel.matchFound)
+            
+            Text("Match Found!")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.themeTextPrimary)
+            
+            if let matchedOption = viewModel.matchedOption {
+                VStack(spacing: 16) {
+                    // Matched option card
+                    VStack(spacing: 12) {
+                        if let url = URL(string: matchedOption.imageUrl) {
+                            AsyncImage(url: url) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            } placeholder: {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.themeSecondary.opacity(0.3))
+                                    .overlay(
+                                        Image(systemName: "photo")
+                                            .font(.title)
+                                            .foregroundColor(.themeTextSecondary)
+                                    )
+                            }
+                            .frame(width: 200, height: 150)
+                            .clipped()
+                            .cornerRadius(12)
+                        }
+                        
+                        Text(matchedOption.label)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.themeTextPrimary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding()
+                    .background(Color.themeCardBackground)
+                    .cornerRadius(16)
+                    .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                }
+            }
+            
+            Text("All participants agreed on this option!")
+                .font(.body)
+                .foregroundColor(.themeTextSecondary)
+                .multilineTextAlignment(.center)
+            
+            Text("Opening results...")
+                .font(.caption)
+                .foregroundColor(.themeTextSecondary)
+                .padding(.top, 8)
+        }
+        .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
@@ -142,6 +233,7 @@ struct SwipeDeckView: View {
                     SwipeCardView(
                         option: option,
                         isTopCard: index == 0,
+                        disabled: viewModel.matchFound,
                         onSwipe: { direction in
                             viewModel.handleSwipe(option: option, direction: direction)
                         }
@@ -168,7 +260,7 @@ struct SwipeDeckView: View {
                     .font(.system(size: 50))
                     .foregroundColor(.themeDislikeColor)
             }
-            .disabled(viewModel.currentOptions.isEmpty)
+            .disabled(viewModel.currentOptions.isEmpty || viewModel.matchFound)
             
             // Like button
             Button(action: {
@@ -180,7 +272,7 @@ struct SwipeDeckView: View {
                     .font(.system(size: 50))
                     .foregroundColor(.themeLikeColor)
             }
-            .disabled(viewModel.currentOptions.isEmpty)
+            .disabled(viewModel.currentOptions.isEmpty || viewModel.matchFound)
         }
         .padding(.bottom, 40)
         .background(Color.themeCardBackground)
