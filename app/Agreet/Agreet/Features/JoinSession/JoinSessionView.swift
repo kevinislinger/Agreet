@@ -3,7 +3,7 @@ import SwiftUI
 struct JoinSessionView: View {
     @StateObject private var viewModel = JoinSessionViewModel()
     @Environment(\.presentationMode) private var presentationMode
-    @State private var navigateToSwipeDeck = false
+
     
     var body: some View {
         NavigationView {
@@ -60,7 +60,8 @@ struct JoinSessionView: View {
                     Button {
                         Task {
                             if await viewModel.joinSession() {
-                                navigateToSwipeDeck = true
+                                // Dismiss this view and let the parent handle navigation
+                                presentationMode.wrappedValue.dismiss()
                             }
                         }
                     } label: {
@@ -84,7 +85,7 @@ struct JoinSessionView: View {
                     }
                     
                     Spacer()
-                }
+                                }
                 
                 // Loading indicator
                 if viewModel.isLoading {
@@ -96,11 +97,7 @@ struct JoinSessionView: View {
                         .edgesIgnoringSafeArea(.all)
                 }
                 
-                // Empty view for navigation placeholder
-                EmptyView()
-                    .navigationDestination(isPresented: $navigateToSwipeDeck) {
-                        Text("Swipe Deck for Session: \(viewModel.joinedSession?.id.uuidString ?? "")")
-                    }
+
             }
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
@@ -115,6 +112,7 @@ struct JoinSessionView: View {
                     dismissButton: .default(Text("OK"))
                 )
             }
+
         }
     }
 }

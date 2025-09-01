@@ -1,0 +1,200 @@
+import SwiftUI
+
+struct SwipeCardView: View {
+    let option: Option
+    let isTopCard: Bool
+    let onSwipe: (SwipeDirection) -> Void
+    
+    @State private var offset = CGSize.zero
+    @State private var rotation: Double = 0
+    @State private var scale: CGFloat = 1.0
+    
+    private let cardWidth: CGFloat = UIScreen.main.bounds.width - 40
+    private let cardHeight: CGFloat = UIScreen.main.bounds.height * 0.6
+    
+    var body: some View {
+        ZStack {
+            // Card background
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.themeCardBackground)
+                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+            
+            VStack(spacing: 0) {
+                // Image area
+                ZStack {
+                    // Placeholder background
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.themeSecondary.opacity(0.3))
+                    
+                    // Option image
+                    if let url = URL(string: option.imageUrl) {
+                        AsyncImage(url: url) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } placeholder: {
+                            // Placeholder content
+                            VStack(spacing: 12) {
+                                Image(systemName: "photo")
+                                    .font(.system(size: 40))
+                                    .foregroundColor(.themeTextSecondary)
+                                
+                                Text("Loading...")
+                                    .font(.caption)
+                                    .foregroundColor(.themeTextSecondary)
+                            }
+                        }
+                        .frame(width: cardWidth, height: cardHeight * 0.7)
+                        .clipped()
+                    } else {
+                        // Fallback for invalid URLs
+                        VStack(spacing: 12) {
+                            Image(systemName: "photo")
+                                .font(.system(size: 40))
+                                .foregroundColor(.themeTextSecondary)
+                            
+                            Text("No Image")
+                                .font(.caption)
+                                .foregroundColor(.themeTextSecondary)
+                        }
+                    }
+                    
+                    // Like/Dislike overlay indicators
+                    HStack {
+                        // Dislike indicator (left side)
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Text("NOPE")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.themeDislikeColor)
+                                    )
+                                    .rotationEffect(.degrees(-15))
+                                    .opacity(offset.width < 0 ? Double(-offset.width / 50) : 0)
+                                
+                                Spacer()
+                            }
+                            .padding(.leading, 20)
+                            Spacer()
+                        }
+                        
+                        Spacer()
+                        
+                        // Like indicator (right side)
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                Text("LIKE")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.themeLikeColor)
+                                    )
+                                    .rotationEffect(.degrees(15))
+                                    .opacity(offset.width > 0 ? Double(offset.width / 50) : 0)
+                            }
+                            .padding(.trailing, 20)
+                            Spacer()
+                        }
+                    }
+                }
+                .frame(height: cardHeight * 0.7)
+                .clipped()
+                
+                // Text area
+                VStack(spacing: 8) {
+                    Text(option.label)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.themeTextPrimary)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                    
+                    Text("Swipe right to like, left to pass")
+                        .font(.caption)
+                        .foregroundColor(.themeTextSecondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .frame(height: cardHeight * 0.3)
+            }
+        }
+        .frame(width: cardWidth, height: cardHeight)
+        .offset(offset)
+        .rotationEffect(.degrees(rotation))
+        .scaleEffect(scale)
+        .gesture(
+            DragGesture()
+                .onChanged { gesture in
+                    if isTopCard {
+                        offset = gesture.translation
+                        rotation = Double(gesture.translation.width / 20)
+                        scale = 1.0 - abs(gesture.translation.width) / 1000
+                    }
+                }
+                .onEnded { gesture in
+                    if isTopCard {
+                        handleSwipeEnd(gesture)
+                    }
+                }
+        )
+        .animation(.interactiveSpring(response: 0.6, dampingFraction: 0.8), value: offset)
+    }
+    
+    private func handleSwipeEnd(_ gesture: DragGesture.Value) {
+        let swipeThreshold: CGFloat = 100
+        
+        if abs(gesture.translation.width) > swipeThreshold {
+            // Swipe was significant enough to trigger action
+            let direction: SwipeDirection = gesture.translation.width > 0 ? .right : .left
+            
+            // Animate card off screen
+            withAnimation(.easeOut(duration: 0.3)) {
+                offset = CGSize(
+                    width: gesture.translation.width > 0 ? cardWidth * 2 : -cardWidth * 2,
+                    height: gesture.translation.height
+                )
+                rotation = gesture.translation.width > 0 ? 20 : -20
+                scale = 0.8
+            }
+            
+            // Call the swipe handler after animation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                onSwipe(direction)
+            }
+        } else {
+            // Swipe wasn't significant, reset to center
+            withAnimation(.interactiveSpring(response: 0.6, dampingFraction: 0.8)) {
+                offset = .zero
+                rotation = 0
+                scale = 1.0
+            }
+        }
+    }
+}
+
+#Preview {
+    SwipeCardView(
+        option: Option(
+            id: UUID(),
+            categoryId: UUID(),
+            label: "Pizza Margherita",
+            imageUrl: "https://example.com/pizza.jpg"
+        ),
+        isTopCard: true,
+        onSwipe: { _ in }
+    )
+    .padding()
+}

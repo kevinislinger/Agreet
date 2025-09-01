@@ -46,6 +46,17 @@ struct LandingView: View {
                 if oldValue && !newValue {
                     Task {
                         await viewModel.fetchSessions()
+                        
+                        // Check if SessionService has a current session (indicating a session was just created)
+                        if let currentSession = SessionService.shared.currentSession {
+                            // Find this session in the open sessions list
+                            if let sessionInList = viewModel.openSessions.first(where: { $0.id == currentSession.id }) {
+                                selectedSession = sessionInList
+                            } else {
+                                // If not found in the list, use the current session directly
+                                selectedSession = currentSession
+                            }
+                        }
                     }
                 }
             }
@@ -57,6 +68,17 @@ struct LandingView: View {
                 if oldValue && !newValue {
                     Task {
                         await viewModel.fetchSessions()
+                        
+                        // Check if SessionService has a current session (indicating a join just happened)
+                        if let currentSession = SessionService.shared.currentSession {
+                            // Find this session in the open sessions list
+                            if let sessionInList = viewModel.openSessions.first(where: { $0.id == currentSession.id }) {
+                                selectedSession = sessionInList
+                            } else {
+                                // If not found in the list, use the current session directly
+                                selectedSession = currentSession
+                            }
+                        }
                     }
                 }
             }
@@ -64,10 +86,18 @@ struct LandingView: View {
                 // Detail view for session will go here
                 if session.status == "open" {
                     // SwipeDeck view
-                    Text("Swipe Deck for \(session.id)")
+                    SwipeDeckView(session: session)
                 } else {
                     // Results view
                     Text("Results for \(session.id)")
+                }
+            }
+            .onChange(of: selectedSession) { oldValue, newValue in
+                // When SwipeDeckView is dismissed (selectedSession becomes nil), refresh sessions
+                if oldValue != nil && newValue == nil {
+                    Task {
+                        await viewModel.fetchSessions()
+                    }
                 }
             }
             .alert(isPresented: Binding<Bool>(

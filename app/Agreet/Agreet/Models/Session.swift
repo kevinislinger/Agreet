@@ -84,4 +84,10 @@ struct Session: Codable, Identifiable, Equatable {
         self.matchedOption = matchedOption
         self.category = category
     }
+    
+    // MARK: - Computed Properties
+    
+    var participantCount: Int {
+        return participants?.count ?? 0
+    }
 }
