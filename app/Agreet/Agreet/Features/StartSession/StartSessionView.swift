@@ -4,7 +4,7 @@ struct StartSessionView: View {
     @StateObject private var viewModel = StartSessionViewModel()
     @Environment(\.presentationMode) private var presentationMode
     @State private var showingShareSheet = false
-    @State private var showingSwipeDeck = false
+
     
     var body: some View {
         NavigationView {
@@ -204,8 +204,7 @@ struct StartSessionView: View {
                     if let session = viewModel.createdSession {
                         // Set the session as current in SessionService
                         SessionService.shared.setCurrentSession(session)
-                        showingSwipeDeck = true
-                        // Dismiss this view so user goes back to LandingView when leaving session
+                        // Dismiss this view and let LandingView handle the SwipeDeckView presentation
                         presentationMode.wrappedValue.dismiss()
                     }
                 } label: {
@@ -223,14 +222,10 @@ struct StartSessionView: View {
             }
         }
         .padding()
-                    .sheet(isPresented: $showingShareSheet) {
-                ShareSheet(items: [viewModel.inviteMessage])
-            }
-            .sheet(isPresented: $showingSwipeDeck) {
-                if let session = viewModel.createdSession {
-                    SwipeDeckView(session: session)
-                }
-            }
+        .sheet(isPresented: $showingShareSheet) {
+            ShareSheet(items: [viewModel.inviteMessage])
+        }
+
     }
 }
 

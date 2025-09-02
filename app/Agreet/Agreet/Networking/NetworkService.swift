@@ -265,7 +265,7 @@ class NetworkService {
         do {
             let response: PostgrestResponse<Session> = try await supabase.supabase
                 .from("sessions")
-                .select("*, session_participants(*)")
+                .select("*, session_participants(*), categories(*)")
                 .eq("id", value: id.uuidString)
                 .single()
                 .execute()
