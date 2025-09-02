@@ -4,6 +4,7 @@ struct LandingView: View {
     @StateObject private var viewModel = LandingViewModel()
     @State private var showingStartSession = false
     @State private var showingJoinSession = false
+    @State private var showingSettings = false
     @State private var selectedSession: Session?
     
     var body: some View {
@@ -31,7 +32,7 @@ struct LandingView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        // Navigate to settings
+                        showingSettings = true
                     }) {
                         Image(systemName: "gearshape.fill")
                             .foregroundColor(Color.themeAccent)
@@ -65,6 +66,9 @@ struct LandingView: View {
             }
             .sheet(isPresented: $showingJoinSession) {
                 JoinSessionView()
+            }
+            .sheet(isPresented: $showingSettings) {
+                SettingsView()
             }
             .onChange(of: showingJoinSession) { oldValue, newValue in
                 // When sheet is dismissed (changes from true to false), refresh sessions

@@ -99,9 +99,9 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Add session history viewing functionality
 
 ### Step 8: Settings & Profile
-- [ ] Implement username setting
-- [ ] Add push notification preferences
-- [ ] Create user profile management
+- [x] Implement username setting
+- [x] Add push notification preferences
+- [x] Create user profile management
 
 ### Step 9: Polish and Testing
 - [ ] Add app icons and splash screen

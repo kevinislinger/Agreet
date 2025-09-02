@@ -1,5 +1,7 @@
 -- Migration: Replace like_option function for edge functions
 -- This function allows edge functions to pass the user ID explicitly instead of relying on auth.uid()
+DROP FUNCTION IF EXISTS like_option;
+
 
 -- Function to like an option with explicit user ID (for edge functions)
 CREATE OR REPLACE FUNCTION like_option(

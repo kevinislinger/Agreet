@@ -84,6 +84,22 @@ class NotificationService: NSObject {
             print("Failed to clear APNs token: \(error.localizedDescription)")
         }
     }
+    
+    /// Check current notification permissions and sync with backend
+    func checkPermissionsAndSync() async {
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+        
+        if settings.authorizationStatus == .authorized {
+            // If authorized, we'll wait for the APNS token to be received
+            // The system will call updateAPNsToken when the token arrives
+            print("Notifications authorized - waiting for APNS token")
+        } else {
+            // If not authorized, clear the token in backend
+            print("Notifications not authorized - clearing APNS token in backend")
+            await clearDeviceToken()
+        }
+    }
 }
 
 // MARK: - UNUserNotificationCenterDelegate
