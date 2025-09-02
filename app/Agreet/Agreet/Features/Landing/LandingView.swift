@@ -90,9 +90,18 @@ struct LandingView: View {
                 if session.status == "open" {
                     // SwipeDeck view
                     SwipeDeckView(session: session)
+                } else if session.status == "matched" {
+                    // Results view for matched session
+                    if let matchedOptionId = session.matchedOptionId {
+                        // Fetch the matched option and show results
+                        AsyncResultsView(session: session, matchedOptionId: matchedOptionId)
+                    } else {
+                        // Fallback if no matched option ID
+                        Text("Results for \(session.id)")
+                    }
                 } else {
-                    // Results view
-                    Text("Results for \(session.id)")
+                    // Results view for closed session (no match)
+                    ClosedSessionView(session: session)
                 }
             }
             .onChange(of: selectedSession) { oldValue, newValue in

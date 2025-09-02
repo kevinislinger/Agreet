@@ -94,9 +94,9 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Implement match detection and navigation
 
 ### Step 7: Feature Implementation - Results & History
-- [ ] Create Results screen showing matched option
-- [ ] Implement Closed Sessions list
-- [ ] Add session history viewing functionality
+- [x] Create Results screen showing matched option
+- [x] Implement Closed Sessions list
+- [x] Add session history viewing functionality
 
 ### Step 8: Settings & Profile
 - [ ] Implement username setting

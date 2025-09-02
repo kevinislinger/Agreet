@@ -296,6 +296,25 @@ class NetworkService {
         }
     }
     
+    /// Fetches a specific option by ID
+    /// - Parameter optionId: The option ID
+    /// - Returns: The Option object
+    /// - Throws: NetworkError if the request fails
+    func fetchOption(id: UUID) async throws -> Option {
+        do {
+            let response: PostgrestResponse<Option> = try await supabase.supabase
+                .from("options")
+                .select()
+                .eq("id", value: id.uuidString)
+                .single()
+                .execute()
+            
+            return try handleResponse(response, as: Option.self)
+        } catch {
+            throw handleError(error)
+        }
+    }
+    
     /// Submits a like for an option in a session
     /// - Parameters:
     ///   - sessionId: The session ID

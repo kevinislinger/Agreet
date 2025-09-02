@@ -3,8 +3,6 @@ import SwiftUI
 struct ResultsView: View {
     let session: Session
     let matchedOption: Option?
-    @StateObject private var viewModel = ResultsViewModel()
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationView {
@@ -25,21 +23,12 @@ struct ResultsView: View {
                             noMatchCard
                         }
                         
-                        // Session details
-                        sessionDetailsCard
-                        
-                        // Action buttons
-                        actionButtons
+
                     }
                     .padding()
                 }
                     }
         .navigationBarHidden(true)
-        .alert("Error", isPresented: $viewModel.showingError) {
-            Button("OK") { }
-        } message: {
-            Text(viewModel.errorMessage ?? "An unknown error occurred")
-        }
     }
     }
     
@@ -140,67 +129,7 @@ struct ResultsView: View {
         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
     }
     
-    private var sessionDetailsCard: some View {
-        VStack(spacing: 16) {
-            Text("Session Details")
-                .font(.headline)
-                .fontWeight(.semibold)
-                .foregroundColor(.themeTextPrimary)
-            
-            VStack(spacing: 12) {
-                HStack {
-                    Text("Participants:")
-                        .foregroundColor(.themeTextSecondary)
-                    Spacer()
-                    Text("\(session.participantCount)/\(session.quorumN)")
-                        .fontWeight(.medium)
-                        .foregroundColor(.themeTextPrimary)
-                }
-                
-                HStack {
-                    Text("Status:")
-                        .foregroundColor(.themeTextSecondary)
-                    Spacer()
-                    Text(session.status.capitalized)
-                        .fontWeight(.medium)
-                        .foregroundColor(session.status == "matched" ? .themeMatchColor : .themeTextPrimary)
-                }
-                
-                HStack {
-                    Text("Created:")
-                        .foregroundColor(.themeTextSecondary)
-                    Spacer()
-                    Text(session.createdAt, style: .date)
-                        .fontWeight(.medium)
-                        .foregroundColor(.themeTextPrimary)
-                }
-                
-                HStack {
-                    Text("Time:")
-                        .foregroundColor(.themeTextSecondary)
-                    Spacer()
-                    Text(session.createdAt, style: .time)
-                        .fontWeight(.medium)
-                        .foregroundColor(.themeTextPrimary)
-                }
-            }
-        }
-        .padding(20)
-        .background(Color.themeCardBackground)
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
-    }
-    
-    private var actionButtons: some View {
-        Button("Return to Sessions") {
-            // Clear current session and return to landing page
-            viewModel.clearSession()
-            dismiss()
-        }
-        .buttonStyle(.borderedProminent)
-        .tint(.themeAccent)
-        .padding(.top, 8)
-    }
+
 }
 
 #Preview {
