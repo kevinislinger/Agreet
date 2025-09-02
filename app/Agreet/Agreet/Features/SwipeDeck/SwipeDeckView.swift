@@ -100,17 +100,9 @@ struct SwipeDeckView: View {
     
     private var sessionHeader: some View {
         VStack(spacing: 12) {
-            HStack {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.themeTextSecondary)
-                }
-                
-                Spacer()
-                
+            // Header with centered title and right-aligned actions
+            ZStack {
+                // Centered title
                 VStack(spacing: 4) {
                     Text(session.category?.name ?? "Unknown Category")
                         .font(.headline)
@@ -121,27 +113,26 @@ struct SwipeDeckView: View {
                         .foregroundColor(.themeTextSecondary)
                 }
                 
-                Spacer()
-                
-                HStack(spacing: 16) {
-                    // Close session button (only for creators)
-                    if SessionService.shared.isCurrentUserCreator {
-                        Button(action: {
-                            showingCloseSessionAlert = true
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.title2)
-                                .foregroundColor(.themeDislikeColor)
-                        }
-                    }
+                // Right-aligned action buttons
+                HStack {
+                    Spacer()
                     
-                    // Session info button
-                    Button(action: {
-                        // Show session info
-                    }) {
-                        Image(systemName: "info.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.themeTextSecondary)
+                    HStack(spacing: 16) {
+                        // Close session button (only for creators)
+                        if SessionService.shared.isCurrentUserCreator {
+                            Button(action: {
+                                showingCloseSessionAlert = true
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.themeDislikeColor)
+                            }
+                        }
+                        
+                        // Done button
+                        Button("Done") {
+                            dismiss()
+                        }
                     }
                 }
             }
