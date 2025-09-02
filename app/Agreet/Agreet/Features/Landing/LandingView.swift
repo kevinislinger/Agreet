@@ -19,9 +19,6 @@ struct LandingView: View {
                         ProgressView()
                             .padding()
                     }
-                    
-                    // Add spacing at the bottom to account for the fixed buttons
-                    Spacer(minLength: 80)
                 }
                 .padding(.horizontal)
             }
@@ -30,7 +27,7 @@ struct LandingView: View {
             }
             .navigationTitle("Agreet")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         showingSettings = true
                     }) {
@@ -38,10 +35,28 @@ struct LandingView: View {
                             .foregroundColor(Color.themeAccent)
                     }
                 }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button(action: {
+                            showingStartSession = true
+                        }) {
+                            Label("Start Session", systemImage: "plus.circle.fill")
+                        }
+                        
+                        Button(action: {
+                            showingJoinSession = true
+                        }) {
+                            Label("Join Session", systemImage: "person.badge.plus.fill")
+                        }
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.title2)
+                            .foregroundColor(Color.themeAccent)
+                    }
+                }
             }
-            .overlay(alignment: .bottom) {
-                bottomButtons
-            }
+
             .sheet(isPresented: $showingStartSession) {
                 StartSessionView()
             }
@@ -165,53 +180,7 @@ struct LandingView: View {
         }
     }
     
-    private var bottomButtons: some View {
-        VStack(spacing: 0) {
-            // Main button area
-            HStack(spacing: 16) {
-                Button {
-                    showingStartSession = true
-                } label: {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                        Text("Start Session")
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.themeAccent)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-                }
-                
-                Button {
-                    showingJoinSession = true
-                } label: {
-                    HStack {
-                        Image(systemName: "person.badge.plus.fill")
-                        Text("Join Session")
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.themeSecondary)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-                }
-            }
-            .padding()
-            
-            // Extend background to bottom of screen
-            Rectangle()
-                .fill(Color.themeBackground)
-                .frame(height: 0)
-                .ignoresSafeArea(.container, edges: .bottom)
-        }
-        .background(
-            Rectangle()
-                .fill(Color.themeBackground)
-                .shadow(color: Color.black.opacity(0.05), radius: 8, y: -4)
-                .ignoresSafeArea(.container, edges: .bottom)
-        )
-    }
+
     
     private func emptyStateView(message: String, icon: String) -> some View {
         VStack(spacing: 12) {
