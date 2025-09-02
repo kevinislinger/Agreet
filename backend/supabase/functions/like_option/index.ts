@@ -10,7 +10,7 @@ interface LikeRequest {
 
 serve(async (req) => {
   try {
-    // Create Supabase client
+    // Create Supabase client with service role key for admin access
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
@@ -28,7 +28,7 @@ serve(async (req) => {
     // Extract the JWT token
     const jwt = authHeader.replace('Bearer ', '');
     
-    // Verify the user is authenticated
+    // Verify the user is authenticated and get user info
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser(jwt);
     
     if (authError || !user) {
@@ -50,13 +50,11 @@ serve(async (req) => {
     }
 
     // Call the like_option RPC function with the authenticated user context
-    const { data, error } = await supabaseClient.rpc('like_option', {
+    // We need to pass the user ID explicitly since we're using service role
+    const { data, error } = await supabaseClient.rpc('like_option_with_user', {
       p_session_id: session_id,
       p_option_id: option_id,
-    }, {
-      headers: {
-        Authorization: `Bearer ${jwt}`
-      }
+      p_user_id: user.id
     });
 
     if (error) {
