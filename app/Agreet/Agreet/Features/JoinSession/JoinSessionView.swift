@@ -75,14 +75,7 @@ struct JoinSessionView: View {
                             .padding(.horizontal)
                     }
                     
-                    // Cancel button
-                    Button {
-                        presentationMode.wrappedValue.dismiss()
-                    } label: {
-                        Text("Cancel")
-                            .font(.system(size: 16))
-                            .foregroundColor(Color.themeTextSecondary)
-                    }
+
                     
                     Spacer()
                                 }

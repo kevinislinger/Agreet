@@ -117,21 +117,14 @@ struct SwipeDeckView: View {
                 HStack {
                     Spacer()
                     
-                    HStack(spacing: 16) {
-                        // Close session button (only for creators)
-                        if SessionService.shared.isCurrentUserCreator {
-                            Button(action: {
-                                showingCloseSessionAlert = true
-                            }) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .font(.title2)
-                                    .foregroundColor(.themeDislikeColor)
-                            }
-                        }
-                        
-                        // Done button
-                        Button("Done") {
-                            dismiss()
+                    // Close session button (only for creators)
+                    if SessionService.shared.isCurrentUserCreator {
+                        Button(action: {
+                            showingCloseSessionAlert = true
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.themeDislikeColor)
                         }
                     }
                 }

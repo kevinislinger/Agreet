@@ -31,16 +31,7 @@ struct StartSessionView: View {
             }
             .navigationTitle("Start Session")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        presentationMode.wrappedValue.dismiss()
-                    }) {
-                        Image(systemName: "xmark")
-                            .foregroundColor(Color.themeAccent)
-                    }
-                }
-            }
+
             .alert(isPresented: Binding<Bool>(
                 get: { viewModel.errorMessage != nil },
                 set: { if !$0 { viewModel.errorMessage = nil } }
