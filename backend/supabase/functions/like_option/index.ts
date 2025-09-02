@@ -25,9 +25,18 @@ serve(async (req) => {
       );
     }
 
-    // Extract and set the JWT
+    // Extract the JWT token
     const jwt = authHeader.replace('Bearer ', '');
-    supabaseClient.auth.setAuth(jwt);
+    
+    // Verify the user is authenticated
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(jwt);
+    
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication token' }),
+        { headers: { 'Content-Type': 'application/json' }, status: 401 }
+      );
+    }
 
     // Get the request body
     const { session_id, option_id }: LikeRequest = await req.json();
@@ -40,14 +49,25 @@ serve(async (req) => {
       );
     }
 
-    // Call the like_option RPC function
+    // Call the like_option RPC function with the authenticated user context
     const { data, error } = await supabaseClient.rpc('like_option', {
       p_session_id: session_id,
       p_option_id: option_id,
+    }, {
+      headers: {
+        Authorization: `Bearer ${jwt}`
+      }
     });
 
     if (error) {
-      throw new Error(`Error processing like: ${error.message}`);
+      console.error('RPC error:', error);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: `Error processing like: ${error.message}` 
+        }),
+        { headers: { 'Content-Type': 'application/json' }, status: 400 }
+      );
     }
 
     return new Response(
@@ -59,7 +79,10 @@ serve(async (req) => {
     console.error('Error processing like:', error);
     
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ 
+        success: false, 
+        error: error.message || 'Internal server error' 
+      }),
       { headers: { 'Content-Type': 'application/json' }, status: 500 }
     );
   }
