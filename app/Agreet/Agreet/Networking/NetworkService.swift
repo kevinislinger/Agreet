@@ -315,6 +315,37 @@ class NetworkService {
         }
     }
     
+    /// Closes a session manually (only for session creators)
+    /// - Parameter sessionId: The session ID to close
+    /// - Returns: True if the session was successfully closed
+    /// - Throws: NetworkError if the request fails
+    func closeSession(sessionId: UUID) async throws -> Bool {
+        do {
+            // Ensure user is authenticated
+            guard AuthService.shared.currentUser != nil else {
+                throw NetworkError.unauthorized
+            }
+            
+            // Call the close_session RPC function
+            let response: PostgrestResponse<Bool> = try await supabase.supabase
+                .rpc("close_session", params: [
+                    "p_session_id": sessionId.uuidString
+                ])
+                .execute()
+            
+            let success = try handleResponse(response, as: Bool.self)
+            
+            // If the RPC returns false, it means the user is not the creator
+            if !success {
+                throw NetworkError.notCreator
+            }
+            
+            return success
+        } catch {
+            throw handleError(error)
+        }
+    }
+    
     /// Submits a like for an option in a session
     /// - Parameters:
     ///   - sessionId: The session ID
@@ -365,6 +396,7 @@ enum NetworkError: Error, LocalizedError {
     case sessionAlreadyMatched
     case alreadyJoined
     case sessionFull
+    case notCreator
     
     var errorDescription: String? {
         switch self {
@@ -386,6 +418,8 @@ enum NetworkError: Error, LocalizedError {
             return "You have already joined this session"
         case .sessionFull:
             return "This session is full"
+        case .notCreator:
+            return "Only the session creator can close this session"
         }
     }
 }

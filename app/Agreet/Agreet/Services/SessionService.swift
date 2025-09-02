@@ -247,6 +247,43 @@ class SessionService: ObservableObject {
         }
     }
     
+    /// Closes the current session (only for session creators)
+    /// - Returns: True if the session was successfully closed
+    @MainActor
+    func closeCurrentSession() async -> Bool {
+        guard let currentSession = currentSession else {
+            return false
+        }
+        
+        do {
+            let success = try await networkService.closeSession(sessionId: currentSession.id)
+            
+            if success {
+                // Refresh the session lists to reflect the change
+                await refreshOpenSessions()
+                await refreshClosedSessions()
+                
+                // Clear the current session since it's now closed
+                clearCurrentSession()
+            }
+            
+            return success
+        } catch {
+            self.error = error
+            print("Error closing session: \(error)")
+            return false
+        }
+    }
+    
+    /// Checks if the current user is the creator of the current session
+    var isCurrentUserCreator: Bool {
+        guard let currentSession = currentSession,
+              let currentUser = AuthService.shared.currentUser else {
+            return false
+        }
+        return currentSession.creatorId == currentUser.id
+    }
+    
     /// Clears the current session
     func clearCurrentSession() {
         currentSession = nil

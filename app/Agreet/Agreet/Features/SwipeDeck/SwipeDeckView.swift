@@ -4,6 +4,9 @@ struct SwipeDeckView: View {
     @StateObject private var viewModel = SwipeDeckViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var showingResults = false
+    @State private var showingCloseSessionAlert = false
+    @State private var showingCloseError = false
+    @State private var closeErrorMessage = ""
 
     let session: Session
     
@@ -47,6 +50,21 @@ struct SwipeDeckView: View {
         } message: {
             Text(viewModel.errorMessage ?? "An unknown error occurred")
         }
+        .alert("Close Session", isPresented: $showingCloseSessionAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Close Session", role: .destructive) {
+                Task {
+                    await closeSession()
+                }
+            }
+        } message: {
+            Text("Are you sure you want to close this session? This action cannot be undone and will end the session for all participants.")
+        }
+        .alert("Error Closing Session", isPresented: $showingCloseError) {
+            Button("OK") { }
+        } message: {
+            Text(closeErrorMessage)
+        }
         .fullScreenCover(isPresented: $showingResults) {
             if let matchedOption = viewModel.matchedOption {
                 ResultsView(session: session, matchedOption: matchedOption)
@@ -55,6 +73,25 @@ struct SwipeDeckView: View {
                         SessionService.shared.clearCurrentSession()
                         dismiss()
                     }
+            }
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    private func closeSession() async {
+        let success = await SessionService.shared.closeCurrentSession()
+        if success {
+            // Session was closed successfully, dismiss this view
+            dismiss()
+        } else {
+            // Show error message
+            if let error = SessionService.shared.error {
+                closeErrorMessage = error.localizedDescription
+                showingCloseError = true
+            } else {
+                closeErrorMessage = "Failed to close session. Please try again."
+                showingCloseError = true
             }
         }
     }
@@ -86,12 +123,26 @@ struct SwipeDeckView: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    // Show session info
-                }) {
-                    Image(systemName: "info.circle.fill")
+                HStack(spacing: 16) {
+                    // Close session button (only for creators)
+                    if SessionService.shared.isCurrentUserCreator {
+                        Button(action: {
+                            showingCloseSessionAlert = true
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.themeDislikeColor)
+                        }
+                    }
+                    
+                    // Session info button
+                    Button(action: {
+                        // Show session info
+                    }) {
+                        Image(systemName: "info.circle.fill")
                         .font(.title2)
                         .foregroundColor(.themeTextSecondary)
+                    }
                 }
             }
             .padding(.horizontal)
@@ -135,13 +186,24 @@ struct SwipeDeckView: View {
                 .foregroundColor(.themeTextSecondary)
                 .multilineTextAlignment(.center)
             
-            Button("Leave Session") {
-                // Clear the current session from SessionService
-                SessionService.shared.clearCurrentSession()
-                dismiss()
+            VStack(spacing: 12) {
+                Button("Leave Session") {
+                    // Clear the current session from SessionService
+                    SessionService.shared.clearCurrentSession()
+                    dismiss()
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.themeAccent)
+                
+                // Close session button (only for creators)
+                if SessionService.shared.isCurrentUserCreator {
+                    Button("Close Session") {
+                        showingCloseSessionAlert = true
+                    }
+                    .buttonStyle(.bordered)
+                    .foregroundColor(.themeDislikeColor)
+                }
             }
-            .buttonStyle(.borderedProminent)
-            .tint(.themeAccent)
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
