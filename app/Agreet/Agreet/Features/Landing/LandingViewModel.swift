@@ -72,4 +72,6 @@ class LandingViewModel: ObservableObject {
             await sessionService.setCurrentSession(session)
         }
     }
+    
+
 }

@@ -47,33 +47,15 @@ struct ResultsView: View {
     
     private var headerSection: some View {
         VStack(spacing: 16) {
-            HStack {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.themeTextSecondary)
-                }
+            VStack(spacing: 4) {
+                Text("Session Results")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.themeTextPrimary)
                 
-                Spacer()
-                
-                VStack(spacing: 4) {
-                    Text("Session Results")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.themeTextPrimary)
-                    
-                    Text(session.category?.name ?? "Unknown Category")
-                        .font(.subheadline)
-                        .foregroundColor(.themeTextSecondary)
-                }
-                
-                Spacer()
-                
-                // Placeholder for balance
-                Color.clear
-                    .frame(width: 24, height: 24)
+                Text(session.category?.name ?? "Unknown Category")
+                    .font(.subheadline)
+                    .foregroundColor(.themeTextSecondary)
             }
             
             // Success indicator
@@ -210,21 +192,13 @@ struct ResultsView: View {
     }
     
     private var actionButtons: some View {
-        VStack(spacing: 12) {
-            Button("Start New Session") {
-                // Clear current session and navigate to landing
-                viewModel.clearSession()
-                dismiss()
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(.themeAccent)
-            
-            Button("Back to Sessions") {
-                dismiss()
-            }
-            .buttonStyle(.bordered)
-            .foregroundColor(.themeTextSecondary)
+        Button("Return to Sessions") {
+            // Clear current session and return to landing page
+            viewModel.clearSession()
+            dismiss()
         }
+        .buttonStyle(.borderedProminent)
+        .tint(.themeAccent)
         .padding(.top, 8)
     }
 }
