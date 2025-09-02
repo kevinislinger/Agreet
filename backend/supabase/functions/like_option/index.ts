@@ -13,7 +13,7 @@ serve(async (req) => {
     // Create Supabase client with service role key for admin access
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
     // Get the authorization header
@@ -51,7 +51,7 @@ serve(async (req) => {
 
     // Call the like_option RPC function with the authenticated user context
     // We need to pass the user ID explicitly since we're using service role
-    const { data, error } = await supabaseClient.rpc('like_option_with_user', {
+    const { data, error } = await supabaseClient.rpc('like_option', {
       p_session_id: session_id,
       p_option_id: option_id,
       p_user_id: user.id
