@@ -5,43 +5,42 @@ struct SessionCell: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            // Category icon or placeholder
+            // Category icon with improved styling
             ZStack {
                 Circle()
-                    .fill(Color.themeCardBackground)
-                    .frame(width: 48, height: 48)
-                    .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    .fill(Color.themeAccent.opacity(0.1))
+                    .frame(width: 52, height: 52)
                 
                 Text(categoryInitial)
-                    .font(Font.system(size: 20, weight: .bold))
+                    .font(.system(size: 22, weight: .bold))
                     .foregroundColor(Color.themeAccent)
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(getCategoryName())
-                    .font(Font.system(size: 16, weight: .semibold))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(Color.themeTextPrimary)
                 
-                HStack(spacing: 12) {
+                HStack(spacing: 16) {
                     // Participant count indicator
-                    HStack(spacing: 4) {
-                        Image(systemName: "person.fill")
-                            .font(Font.system(size: 12))
+                    HStack(spacing: 6) {
+                        Image(systemName: "person.2.fill")
+                            .font(.system(size: 12))
                             .foregroundColor(Color.themeTextSecondary)
                         
                         Text("\(session.participants?.count ?? 0)/\(session.quorumN)")
-                            .font(Font.system(size: 12))
+                            .font(.system(size: 13, weight: .medium))
                             .foregroundColor(Color.themeTextSecondary)
                     }
                     
                     // Updated time indicator
-                    HStack(spacing: 4) {
+                    HStack(spacing: 6) {
                         Image(systemName: "clock.fill")
-                            .font(Font.system(size: 12))
+                            .font(.system(size: 12))
                             .foregroundColor(Color.themeTextSecondary)
                         
                         Text(formattedUpdatedTime)
-                            .font(Font.system(size: 12))
+                            .font(.system(size: 13, weight: .medium))
                             .foregroundColor(Color.themeTextSecondary)
                     }
                 }
@@ -49,25 +48,47 @@ struct SessionCell: View {
             
             Spacer()
             
-            // Status indicator or action button
+            // Status indicator with improved styling
             if session.status == "matched" {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(Color.themeTertiary)
-                    .font(Font.system(size: 20))
+                ZStack {
+                    Circle()
+                        .fill(Color.themeSecondary.opacity(0.1))
+                        .frame(width: 32, height: 32)
+                    
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(Color.themeSecondary)
+                        .font(.system(size: 18))
+                }
             } else if session.status == "closed" {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(Color.red)
-                    .font(Font.system(size: 20))
+                ZStack {
+                    Circle()
+                        .fill(Color.red.opacity(0.1))
+                        .frame(width: 32, height: 32)
+                    
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(Color.red)
+                        .font(.system(size: 18))
+                }
             } else {
-                Image(systemName: "chevron.right")
-                    .foregroundColor(Color.themeAccent)
-                    .font(Font.system(size: 20))
+                ZStack {
+                    Circle()
+                        .fill(Color.themeAccent.opacity(0.1))
+                        .frame(width: 32, height: 32)
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(Color.themeAccent)
+                        .font(.system(size: 16, weight: .semibold))
+                }
             }
         }
-        .padding(16)
+        .padding(20)
         .background(Color.themeCardBackground)
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 2)
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 4)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.themeCardBackground.opacity(0.8), lineWidth: 1)
+        )
     }
     
     // Helper computed properties

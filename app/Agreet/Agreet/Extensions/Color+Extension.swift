@@ -4,7 +4,6 @@ extension Color {
     // Semantic colors for specific use cases
     static let themeAccent = Color("AccentColor")
     static let themeSecondary = Color("AppSecondaryColor")
-    static let themeTertiary = Color("AppTertiaryColor")
     static let themeBackground = Color("BackgroundColor")
     
     // UI element colors
@@ -13,7 +12,7 @@ extension Color {
     static let themeTextSecondary = Color("TextSecondary")
     
     // Functional colors
-    static let themeLikeColor = themeTertiary
+    static let themeLikeColor = Color.green
     static let themeDislikeColor = Color.red
     static let themeMatchColor = Color.yellow.opacity(0.8)
     static let themeSessionCardBackground = themeCardBackground

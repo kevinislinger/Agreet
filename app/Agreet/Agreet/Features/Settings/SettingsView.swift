@@ -6,227 +6,265 @@ struct SettingsView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                // Profile Section
-                Section("Profile") {
-                    HStack {
-                        Image(systemName: "person.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(.themeAccent)
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Username")
-                                .font(.headline)
-                                .foregroundColor(.themeTextPrimary)
+            ZStack {
+                // Background
+                Color.themeBackground
+                    .ignoresSafeArea()
+                
+                List {
+                    // Profile Section
+                    Section {
+                        HStack {
+                            Image(systemName: "person.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.themeAccent)
                             
-                            if viewModel.isEditingUsername {
-                                HStack {
-                                    TextField("Enter username", text: $viewModel.editingUsername)
-                                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                                        .autocapitalization(.none)
-                                        .disableAutocorrection(true)
-                                    
-                                    Button("Save") {
-                                        Task {
-                                            await viewModel.saveUsername()
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Username")
+                                    .font(.headline)
+                                    .foregroundColor(.themeTextPrimary)
+                                
+                                if viewModel.isEditingUsername {
+                                    HStack {
+                                        TextField("Enter username", text: $viewModel.editingUsername)
+                                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                                            .autocapitalization(.none)
+                                            .disableAutocorrection(true)
+                                        
+                                        Button("Save") {
+                                            Task {
+                                                await viewModel.saveUsername()
+                                            }
                                         }
+                                        .buttonStyle(.borderedProminent)
+                                        .disabled(viewModel.editingUsername.isEmpty)
+                                        
+                                        Button("Cancel") {
+                                            viewModel.cancelUsernameEdit()
+                                        }
+                                        .buttonStyle(.bordered)
                                     }
-                                    .buttonStyle(.borderedProminent)
-                                    .disabled(viewModel.editingUsername.isEmpty)
-                                    
-                                    Button("Cancel") {
-                                        viewModel.cancelUsernameEdit()
+                                } else {
+                                    HStack {
+                                        Text(viewModel.currentUsername)
+                                            .foregroundColor(.themeTextSecondary)
+                                        
+                                        Spacer()
+                                        
+                                        Button("Edit") {
+                                            viewModel.startUsernameEdit()
+                                        }
+                                        .buttonStyle(.bordered)
                                     }
-                                    .buttonStyle(.bordered)
-                                }
-                            } else {
-                                HStack {
-                                    Text(viewModel.currentUsername)
-                                        .foregroundColor(.themeTextSecondary)
-                                    
-                                    Spacer()
-                                    
-                                    Button("Edit") {
-                                        viewModel.startUsernameEdit()
-                                    }
-                                    .buttonStyle(.bordered)
                                 }
                             }
                         }
+                        .padding(.vertical, 4)
+                    } header: {
+                        Text("Profile")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.themeTextPrimary)
+                            .textCase(nil)
+                            .padding(.bottom, 8)
                     }
-                    .padding(.vertical, 4)
-                }
-                
-                // Notifications Section
-                Section("Notifications") {
-                    HStack {
-                        Image(systemName: "bell.fill")
-                            .font(.title2)
-                            .foregroundColor(.themeSecondary)
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Push Notifications")
-                                .font(.headline)
-                                .foregroundColor(.themeTextPrimary)
-                            
-                            Text("Get notified when your group finds a match")
-                                .font(.caption)
-                                .foregroundColor(.themeTextSecondary)
-                        }
-                        
-                        Spacer()
-                        
-                        // Status indicator
-                        HStack(spacing: 8) {
-                            Circle()
-                                .fill(viewModel.pushNotificationsEnabled ? Color.green : Color.red)
-                                .frame(width: 8, height: 8)
-                            
-                            Text(viewModel.pushNotificationsEnabled ? "Enabled" : "Disabled")
-                                .font(.caption)
-                                .foregroundColor(viewModel.pushNotificationsEnabled ? .green : .red)
-                        }
-                    }
-                    .padding(.vertical, 4)
                     
-                    // Settings button
-                    Button(action: {
-                        viewModel.openNotificationSettings()
-                    }) {
+                    // Notifications Section
+                    Section {
                         HStack {
-                            Image(systemName: "gear")
+                            Image(systemName: "bell.fill")
+                                .font(.title2)
                                 .foregroundColor(.themeSecondary)
                             
-                            Text("Open iOS Settings")
-                                .foregroundColor(.themeTextPrimary)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Push Notifications")
+                                    .font(.headline)
+                                    .foregroundColor(.themeTextPrimary)
+                                
+                                Text("Get notified when your group finds a match")
+                                    .font(.caption)
+                                    .foregroundColor(.themeTextSecondary)
+                            }
                             
                             Spacer()
                             
-                            Image(systemName: "arrow.up.right.square")
-                                .font(.caption)
-                                .foregroundColor(.themeTextSecondary)
+                            // Status indicator
+                            HStack(spacing: 8) {
+                                Circle()
+                                    .fill(viewModel.pushNotificationsEnabled ? Color.green : Color.red)
+                                    .frame(width: 8, height: 8)
+                                
+                                Text(viewModel.pushNotificationsEnabled ? "Enabled" : "Disabled")
+                                    .font(.caption)
+                                    .foregroundColor(viewModel.pushNotificationsEnabled ? .green : .red)
+                            }
                         }
-                    }
-                    .padding(.leading, 32)
-                    
-                    if !viewModel.pushNotificationsEnabled {
-                        HStack {
-                            Image(systemName: "info.circle")
-                                .foregroundColor(.themeSecondary)
-                            
-                            Text("Enable notifications in iOS Settings to get match alerts")
-                                .font(.caption)
-                                .foregroundColor(.themeTextSecondary)
-                            
-                            Spacer()
+                        .padding(.vertical, 4)
+                        
+                        // Settings button
+                        Button(action: {
+                            viewModel.openNotificationSettings()
+                        }) {
+                            HStack {
+                                Image(systemName: "gear")
+                                    .foregroundColor(.themeSecondary)
+                                
+                                Text("Open iOS Settings")
+                                    .foregroundColor(.themeTextPrimary)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "arrow.up.right.square")
+                                    .font(.caption)
+                                    .foregroundColor(.themeTextSecondary)
+                            }
                         }
                         .padding(.leading, 32)
-                    }
-                }
-                
-                // App Information Section
-                Section("App Information") {
-                    HStack {
-                        Image(systemName: "info.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(.themeTertiary)
                         
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Version")
-                                .font(.headline)
-                                .foregroundColor(.themeTextPrimary)
-                            
-                            Text(viewModel.appVersion)
-                                .font(.caption)
-                                .foregroundColor(.themeTextSecondary)
+                        if !viewModel.pushNotificationsEnabled {
+                            HStack {
+                                Image(systemName: "info.circle")
+                                    .foregroundColor(.themeSecondary)
+                                
+                                Text("Enable notifications in iOS Settings to get match alerts")
+                                    .font(.caption)
+                                    .foregroundColor(.themeTextSecondary)
+                                
+                                Spacer()
+                            }
+                            .padding(.leading, 32)
                         }
-                        
-                        Spacer()
+                    } header: {
+                        Text("Notifications")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.themeTextPrimary)
+                            .textCase(nil)
+                            .padding(.bottom, 8)
                     }
-                    .padding(.vertical, 4)
                     
-                    HStack {
-                        Image(systemName: "calendar")
-                            .foregroundColor(.themeTertiary)
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Member Since")
-                                .font(.headline)
-                                .foregroundColor(.themeTextPrimary)
-                            
-                            Text(viewModel.memberSinceText)
-                                .font(.caption)
-                                .foregroundColor(.themeTextSecondary)
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding(.vertical, 4)
-                }
-                
-                // Support Section
-                Section("Support") {
-                    Button(action: {
-                        viewModel.showHelp()
-                    }) {
+                    // App Information Section
+                    Section {
                         HStack {
-                            Image(systemName: "questionmark.circle.fill")
+                            Image(systemName: "info.circle.fill")
                                 .font(.title2)
                                 .foregroundColor(.themeSecondary)
                             
-                            Text("Help & Support")
-                                .foregroundColor(.themeTextPrimary)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Version")
+                                    .font(.headline)
+                                    .foregroundColor(.themeTextPrimary)
+                                
+                                Text(viewModel.appVersion)
+                                    .font(.caption)
+                                    .foregroundColor(.themeTextSecondary)
+                            }
                             
                             Spacer()
-                            
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundColor(.themeTextSecondary)
                         }
-                    }
-                    .padding(.vertical, 4)
-                    
-                    Button(action: {
-                        viewModel.showPrivacyPolicy()
-                    }) {
+                        .padding(.vertical, 4)
+                        
                         HStack {
-                            Image(systemName: "hand.raised.fill")
-                                .font(.title2)
+                            Image(systemName: "calendar")
                                 .foregroundColor(.themeSecondary)
                             
-                            Text("Privacy Policy")
-                                .foregroundColor(.themeTextPrimary)
-                            
-                            Spacer()
-                            
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundColor(.themeTextSecondary)
-                        }
-                    }
-                    .padding(.vertical, 4)
-                }
-                
-                // Account Section
-                Section("Account") {
-                    Button(action: {
-                        Task {
-                            await viewModel.signOut()
-                        }
-                    }) {
-                        HStack {
-                            Image(systemName: "rectangle.portrait.and.arrow.right")
-                                .font(.title2)
-                                .foregroundColor(.red)
-                            
-                            Text("Sign Out")
-                                .foregroundColor(.red)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Member Since")
+                                    .font(.headline)
+                                    .foregroundColor(.themeTextPrimary)
+                                
+                                Text(viewModel.memberSinceText)
+                                    .font(.caption)
+                                    .foregroundColor(.themeTextSecondary)
+                            }
                             
                             Spacer()
                         }
+                        .padding(.vertical, 4)
+                    } header: {
+                        Text("App Information")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.themeTextPrimary)
+                            .textCase(nil)
+                            .padding(.bottom, 8)
                     }
-                    .padding(.vertical, 4)
+                    
+                    // Support Section
+                    Section {
+                        Button(action: {
+                            viewModel.showHelp()
+                        }) {
+                            HStack {
+                                Image(systemName: "questionmark.circle.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.themeSecondary)
+                                
+                                Text("Help & Support")
+                                    .foregroundColor(.themeTextPrimary)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundColor(.themeTextSecondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                        
+                        Button(action: {
+                            viewModel.showPrivacyPolicy()
+                        }) {
+                            HStack {
+                                Image(systemName: "hand.raised.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.themeSecondary)
+                                
+                                Text("Privacy Policy")
+                                    .foregroundColor(.themeTextPrimary)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundColor(.themeTextSecondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    } header: {
+                        Text("Support")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.themeTextPrimary)
+                            .textCase(nil)
+                            .padding(.bottom, 8)
+                    }
+                    
+                    // Account Section
+                    Section {
+                        Button(action: {
+                            Task {
+                                await viewModel.signOut()
+                            }
+                        }) {
+                            HStack {
+                                Image(systemName: "rectangle.portrait.and.arrow.right")
+                                    .font(.title2)
+                                    .foregroundColor(.red)
+                                
+                                Text("Sign Out")
+                                    .foregroundColor(.red)
+                                
+                                Spacer()
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    } header: {
+                        Text("Account")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.themeTextPrimary)
+                            .textCase(nil)
+                            .padding(.bottom, 8)
+                    }
                 }
+                .listStyle(InsetGroupedListStyle())
+                .scrollContentBackground(.hidden) // Hide default list background
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)

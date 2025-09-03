@@ -104,7 +104,7 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Create user profile management
 
 ### Step 9: Polish and Testing
-- [ ] Add app icons and splash screen
+- [x] Add app icons and splash screen
 - [ ] Implement error handling and retry mechanisms
 - [ ] Add loading states and animations
 - [ ] Implement offline mode and sync queue

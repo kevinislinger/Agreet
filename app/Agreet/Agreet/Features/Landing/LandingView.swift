@@ -9,29 +9,50 @@ struct LandingView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 24) {
-                    openSessionsSection
+            ZStack {
+                // Background
+                Color.themeBackground
+                    .ignoresSafeArea()
+                
+                ScrollView {
+                    VStack(spacing: 32) {
+                                            // Welcome section
+                    welcomeSection
                     
-                    closedSessionsSection
-                    
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .padding()
+                    // Open sessions
+                        if !viewModel.openSessions.isEmpty {
+                            openSessionsSection
+                        }
+                        
+                        // Closed sessions
+                        if !viewModel.closedSessions.isEmpty {
+                            closedSessionsSection
+                        }
+                        
+                        // Empty state
+                        if viewModel.openSessions.isEmpty && viewModel.closedSessions.isEmpty && !viewModel.isLoading {
+                            emptyStateSection
+                        }
+                        
+                        if viewModel.isLoading {
+                            loadingSection
+                        }
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                    .padding(.bottom, 40)
                 }
-                .padding(.horizontal)
             }
             .refreshable {
                 await viewModel.fetchSessions()
             }
-            .navigationTitle("Agreet")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         showingSettings = true
                     }) {
                         Image(systemName: "gearshape.fill")
+                            .font(.system(size: 18, weight: .medium))
                             .foregroundColor(Color.themeAccent)
                     }
                 }
@@ -51,12 +72,11 @@ struct LandingView: View {
                         }
                     } label: {
                         Image(systemName: "plus")
-                            .font(.title2)
+                            .font(.system(size: 20, weight: .medium))
                             .foregroundColor(Color.themeAccent)
                     }
                 }
             }
-
             .sheet(isPresented: $showingStartSession) {
                 StartSessionView()
             }
@@ -136,16 +156,50 @@ struct LandingView: View {
     
     // MARK: - Components
     
-    private var openSessionsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Open Sessions")
-                .font(Font.system(size: 20, weight: .bold))
-                .foregroundColor(Color.themeTextPrimary)
-                .padding(.horizontal, 4)
+    private var welcomeSection: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 0) {
+                Text("Welcome to ")
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundColor(Color.themeTextPrimary)
+                
+                GradientText(
+                    text: "Agreet",
+                    colors: [Color.themeAccent, Color.themeSecondary]
+                )
+                .font(.system(size: 28, weight: .bold))
+            }
+            .multilineTextAlignment(.center)
             
-            if viewModel.openSessions.isEmpty {
-                emptyStateView(message: "No open sessions", icon: "tray.fill")
-            } else {
+            Text("Build consensus together")
+                .font(.system(size: 16, weight: .regular))
+                .foregroundColor(Color.themeTextSecondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.top, 20)
+    }
+    
+
+    
+    private var openSessionsSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Active Sessions")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(Color.themeTextPrimary)
+                
+                Spacer()
+                
+                Text("\(viewModel.openSessions.count)")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(Color.themeAccent)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.themeAccent.opacity(0.1))
+                    .cornerRadius(12)
+            }
+            
+            LazyVStack(spacing: 12) {
                 ForEach(viewModel.openSessions) { session in
                     Button {
                         selectedSession = session
@@ -159,15 +213,24 @@ struct LandingView: View {
     }
     
     private var closedSessionsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Completed Sessions")
-                .font(Font.system(size: 20, weight: .bold))
-                .foregroundColor(Color.themeTextPrimary)
-                .padding(.horizontal, 4)
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Completed Sessions")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(Color.themeTextPrimary)
+                
+                Spacer()
+                
+                Text("\(viewModel.closedSessions.count)")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(Color.themeTextSecondary)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.themeTextSecondary.opacity(0.1))
+                    .cornerRadius(12)
+            }
             
-            if viewModel.closedSessions.isEmpty {
-                emptyStateView(message: "No completed sessions", icon: "tray.fill")
-            } else {
+            LazyVStack(spacing: 12) {
                 ForEach(viewModel.closedSessions) { session in
                     Button {
                         selectedSession = session
@@ -180,22 +243,48 @@ struct LandingView: View {
         }
     }
     
-
-    
-    private func emptyStateView(message: String, icon: String) -> some View {
-        VStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(Font.system(size: 40))
-                .foregroundColor(Color.themeTextSecondary.opacity(0.5))
+    private var emptyStateSection: some View {
+        VStack(spacing: 20) {
+            ZStack {
+                Circle()
+                    .fill(Color.themeCardBackground)
+                    .frame(width: 80, height: 80)
+                
+                Image(systemName: "tray.fill")
+                    .font(.system(size: 32))
+                    .foregroundColor(Color.themeTextSecondary.opacity(0.6))
+            }
             
-            Text(message)
-                .font(Font.system(size: 16))
+            VStack(spacing: 8) {
+                Text("No Sessions Yet")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(Color.themeTextPrimary)
+                
+                Text("Start your first session or join an existing one to begin building consensus")
+                    .font(.system(size: 16))
+                    .foregroundColor(Color.themeTextSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(3)
+            }
+        }
+        .padding(.vertical, 40)
+        .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity)
+        .background(Color.themeCardBackground)
+        .cornerRadius(20)
+    }
+    
+    private var loadingSection: some View {
+        VStack(spacing: 16) {
+            ProgressView()
+                .scaleEffect(1.2)
+                .progressViewStyle(CircularProgressViewStyle(tint: Color.themeAccent))
+            
+            Text("Loading sessions...")
+                .font(.system(size: 16))
                 .foregroundColor(Color.themeTextSecondary)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 48)
-        .background(Color.themeCardBackground)
-        .cornerRadius(12)
+        .padding(.vertical, 40)
     }
     
     // MARK: - Actions
@@ -203,5 +292,23 @@ struct LandingView: View {
     @MainActor
     private func refreshSessions() async {
         await viewModel.fetchSessions()
+    }
+}
+
+// MARK: - Gradient Text View
+
+struct GradientText: View {
+    let text: String
+    let colors: [Color]
+    
+    var body: some View {
+        Text(text)
+            .foregroundStyle(
+                LinearGradient(
+                    colors: colors,
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
     }
 }
