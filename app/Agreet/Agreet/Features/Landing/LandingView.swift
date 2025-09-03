@@ -6,6 +6,9 @@ struct LandingView: View {
     @State private var showingJoinSession = false
     @State private var showingSettings = false
     @State private var selectedSession: Session?
+    @State private var showingResults = false
+    @State private var matchedSession: Session?
+    @State private var matchedOption: Option?
     
     var body: some View {
         NavigationView {
@@ -78,7 +81,10 @@ struct LandingView: View {
                 }
             }
             .sheet(isPresented: $showingStartSession) {
-                StartSessionView()
+                StartSessionView { session in
+                    // When Start Swiping is pressed, automatically open the created session
+                    selectedSession = session
+                }
             }
             .onChange(of: showingStartSession) { oldValue, newValue in
                 // When sheet is dismissed (changes from true to false), refresh sessions
@@ -112,7 +118,12 @@ struct LandingView: View {
                 // Detail view for session will go here
                 if session.status == "open" {
                     // SwipeDeck view
-                    SwipeDeckView(session: session)
+                    SwipeDeckView(session: session) { session, matchedOption in
+                        // When a match is found, store the match details and show results
+                        self.matchedSession = session
+                        self.matchedOption = matchedOption
+                        self.showingResults = true
+                    }
                 } else if session.status == "matched" {
                     // Results view for matched session
                     if let matchedOptionId = session.matchedOptionId {
@@ -133,6 +144,17 @@ struct LandingView: View {
                     Task {
                         await viewModel.fetchSessions()
                     }
+                }
+            }
+            .sheet(isPresented: $showingResults) {
+                if let session = matchedSession, let option = matchedOption {
+                    ResultsView(session: session, matchedOption: option)
+                        .onDisappear {
+                            // When Results screen is dismissed, refresh sessions to show updated status
+                            Task {
+                                await viewModel.fetchSessions()
+                            }
+                        }
                 }
             }
             .alert(isPresented: Binding<Bool>(

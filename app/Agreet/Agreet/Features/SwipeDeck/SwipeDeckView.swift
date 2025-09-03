@@ -3,12 +3,12 @@ import SwiftUI
 struct SwipeDeckView: View {
     @StateObject private var viewModel = SwipeDeckViewModel()
     @Environment(\.dismiss) private var dismiss
-    @State private var showingResults = false
     @State private var showingCloseSessionAlert = false
     @State private var showingCloseError = false
     @State private var closeErrorMessage = ""
 
     let session: Session
+    let onMatchFound: (Session, Option) -> Void
     
     var body: some View {
         NavigationView {
@@ -37,12 +37,10 @@ struct SwipeDeckView: View {
             .navigationBarHidden(true)
         }
         .onAppear {
-            viewModel.setSession(session)
-        }
-        .onChange(of: viewModel.matchFound) { _, matchFound in
-            if matchFound {
-                // When match is found, show results screen
-                showingResults = true
+            viewModel.setSession(session) { session, matchedOption in
+                // When match is found, dismiss this view and notify parent
+                dismiss()
+                onMatchFound(session, matchedOption)
             }
         }
         .alert("Error", isPresented: $viewModel.showingError) {
@@ -64,16 +62,6 @@ struct SwipeDeckView: View {
             Button("OK") { }
         } message: {
             Text(closeErrorMessage)
-        }
-        .fullScreenCover(isPresented: $showingResults) {
-            if let matchedOption = viewModel.matchedOption {
-                ResultsView(session: session, matchedOption: matchedOption)
-                    .onDisappear {
-                        // When Results screen is dismissed, also dismiss this SwipeDeckView
-                        SessionService.shared.clearCurrentSession()
-                        dismiss()
-                    }
-            }
         }
     }
     

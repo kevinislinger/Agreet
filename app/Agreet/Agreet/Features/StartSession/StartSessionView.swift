@@ -4,6 +4,7 @@ struct StartSessionView: View {
     @StateObject private var viewModel = StartSessionViewModel()
     @Environment(\.presentationMode) private var presentationMode
     @State private var showingShareSheet = false
+    let onStartSwiping: (Session) -> Void
 
     
     var body: some View {
@@ -141,6 +142,7 @@ struct StartSessionView: View {
     // Success view after session creation
     private var successView: some View {
         VStack(spacing: 24) {
+            // Success icon
             Image(systemName: "checkmark.circle.fill")
                 .resizable()
                 .scaledToFit()
@@ -195,7 +197,9 @@ struct StartSessionView: View {
                     if let session = viewModel.createdSession {
                         // Set the session as current in SessionService
                         SessionService.shared.setCurrentSession(session)
-                        // Dismiss this view and let LandingView handle the SwipeDeckView presentation
+                        // Call the callback to open the session in the parent view
+                        onStartSwiping(session)
+                        // Dismiss this view
                         presentationMode.wrappedValue.dismiss()
                     }
                 } label: {
@@ -267,5 +271,7 @@ struct ShareSheet: UIViewControllerRepresentable {
 }
 
 #Preview {
-    StartSessionView()
+    StartSessionView { session in
+        // Preview callback
+    }
 }

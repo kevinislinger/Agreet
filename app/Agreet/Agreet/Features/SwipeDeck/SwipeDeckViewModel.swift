@@ -19,6 +19,7 @@ class SwipeDeckViewModel: ObservableObject {
     private var session: Session?
     private var allOptions: [Option] = []
     private var sessionService = SessionService.shared
+    private var onMatchFound: ((Session, Option) -> Void)?
     
     // MARK: - Computed Properties
     
@@ -32,8 +33,9 @@ class SwipeDeckViewModel: ObservableObject {
     
     // MARK: - Public Methods
     
-    func setSession(_ session: Session) {
+    func setSession(_ session: Session, onMatchFound: @escaping (Session, Option) -> Void) {
         self.session = session
+        self.onMatchFound = onMatchFound
         loadOptions()
     }
     
@@ -98,6 +100,11 @@ class SwipeDeckViewModel: ObservableObject {
             // Add success haptic feedback
             let notificationFeedback = UINotificationFeedbackGenerator()
             notificationFeedback.notificationOccurred(.success)
+            
+            // Notify parent view about the match
+            if let session = session, let matchedOption = matchedOption {
+                onMatchFound?(session, matchedOption)
+            }
         }
     }
 }

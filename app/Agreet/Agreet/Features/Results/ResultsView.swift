@@ -22,14 +22,12 @@ struct ResultsView: View {
                         } else {
                             noMatchCard
                         }
-                        
-
                     }
                     .padding()
                 }
-                    }
-        .navigationBarHidden(true)
-    }
+            }
+            .navigationBarHidden(true)
+        }
     }
     
     // MARK: - Components
@@ -128,8 +126,6 @@ struct ResultsView: View {
         .cornerRadius(20)
         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
     }
-    
-
 }
 
 #Preview {
