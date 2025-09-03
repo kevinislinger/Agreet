@@ -262,6 +262,25 @@ struct SettingsView: View {
                             .textCase(nil)
                             .padding(.bottom, 8)
                     }
+                    
+                    // Version Section
+                    HStack {
+                        Spacer()
+                        
+                        VStack(spacing: 4) {
+                            Text("Agreet")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.themeTextSecondary)
+                            
+                            Text("Version \(viewModel.appVersion)")
+                                .font(.system(size: 12, weight: .regular))
+                                .foregroundColor(.themeTextSecondary.opacity(0.8))
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding(.vertical, 16)
+                    .listRowBackground(Color.clear)
                 }
                 .listStyle(InsetGroupedListStyle())
                 .scrollContentBackground(.hidden) // Hide default list background
