@@ -8,26 +8,26 @@ BEGIN
   -- Create bucket if it doesn't exist
   IF NOT EXISTS (SELECT 1 FROM storage.buckets WHERE id = 'option-images') THEN
     INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-    VALUES ('option-images', 'option-images', true, 5242880, ARRAY['image/jpeg', 'image/png', 'image/webp']);
+    VALUES ('option-images', 'option-images', false, 5242880, ARRAY['image/jpeg', 'image/png', 'image/webp']);
     
-    RAISE NOTICE 'Created option-images storage bucket';
+    RAISE NOTICE 'Created option-images storage bucket (private)';
   ELSE
     RAISE NOTICE 'Storage bucket option-images already exists';
   END IF;
   
-  -- Create policy for public read access if it doesn't exist
+  -- Create policy for authenticated read access if it doesn't exist
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies 
     WHERE tablename = 'objects' 
-    AND policyname = 'Public read access for authenticated users'
+    AND policyname = 'Authenticated read access for option images'
     AND schemaname = 'storage'
   ) THEN
-    CREATE POLICY "Public read access for authenticated users" ON storage.objects
+    CREATE POLICY "Authenticated read access for option images" ON storage.objects
     FOR SELECT USING (bucket_id = 'option-images' AND auth.role() = 'authenticated');
     
-    RAISE NOTICE 'Created public read access policy';
+    RAISE NOTICE 'Created authenticated read access policy';
   ELSE
-    RAISE NOTICE 'Public read access policy already exists';
+    RAISE NOTICE 'Authenticated read access policy already exists';
   END IF;
   
   -- Note: File size and type restrictions are handled at the bucket level
