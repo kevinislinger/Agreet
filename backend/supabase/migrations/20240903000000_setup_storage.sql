@@ -40,8 +40,8 @@ BEGIN
     CREATE POLICY "File size and type restrictions" ON storage.objects
     FOR INSERT WITH CHECK (
       bucket_id = 'option-images' 
-      AND octet_length(file) <= 5242880 
-      AND (file_type() IN ('image/jpeg', 'image/png', 'image/webp'))
+      AND octet_length(data) <= 5242880 
+      AND (mime_type IN ('image/jpeg', 'image/png', 'image/webp'))
     );
     
     RAISE NOTICE 'Created file restrictions policy';
