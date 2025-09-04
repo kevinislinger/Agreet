@@ -14,35 +14,45 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Create `categories` table (id, name, icon_url)
 - [x] Create `sessions` table (id, creator_id, category_id, quorum_n, status, matched_option_id, invite_code, created_at)
 - [x] Create `session_participants` table (session_id, user_id, joined_at)
-- [x] Create `options` table (id, category_id, label, image_url)
+- [x] Create `options` table (id, category_id, label, image_path)
 - [x] Create `likes` table (id, session_id, option_id, user_id, created_at)
 - [x] Set up foreign key constraints and indexes
 
-### Step 3: Authentication and Security
+### Step 3: Supabase Storage Setup
+- [x] Create `option-images` storage bucket
+- [x] Configure bucket policies for public read access
+- [x] Set up storage RLS policies for authenticated users
+- [x] Configure file size limits (max 5MB per image)
+- [x] Set allowed file types (JPEG, PNG, WebP)
+
+### Step 4: Authentication and Security
 - [x] Configure anonymous authentication
 - [x] Set up Row Level Security (RLS) policies for each table
 - [x] Implement session membership validation checks
 
-### Step 4: Database Triggers and Functions
+### Step 5: Database Triggers and Functions
 - [x] Create trigger for preventing session join when full
 - [x] Implement matching algorithm trigger on likes table
 - [x] Create helper functions for session creation and management
 - [x] Add trigger for automatic user creation on signup
 
-### Step 5: Edge Functions Implementation
+### Step 6: Edge Functions Implementation
 - [x] Implement `like_option` function
 - [x] Create `update_apns_token` function
 - [x] Develop `notify_match` function for push notifications
 - [x] Test edge functions with mock data
 
-### Step 6: Seed Data and Testing
+### Step 7: Seed Data and Testing
 - [x] Create seed data for categories and options
-- [x] Apply database migrations 
+- [ ] Upload sample images manually to Supabase Storage
+- [ ] Update seed data to reference storage paths instead of URLs
+- [x] Apply database migrations
 - [x] Deploy edge functions
 - [x] Document API endpoints and functions
 - [x] Create test scripts for automated backend testing
 - [x] Test database constraints and triggers
 - [x] Verify edge functions work correctly
+- [ ] Test image retrieval functionality
 
 ## Phase 2: iOS App Implementation
 
@@ -60,6 +70,7 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Create session management service
 - [x] Create data models matching the backend schema
 - [x] Implement push notification handling
+- [ ] Create image storage service for Supabase Storage integration
 
 ### Step 3: Color Palette Implementation
 - [x] Create color assets in Asset Catalog
@@ -92,6 +103,9 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Add like/dislike functionality
 - [x] Connect to backend for recording likes
 - [x] Implement match detection and navigation
+- [ ] Integrate Supabase Storage for option images
+- [ ] Implement image loading and caching
+- [ ] Add fallback handling for failed image loads
 
 ### Step 7: Feature Implementation - Results & History
 - [x] Create Results screen showing matched option
@@ -110,6 +124,7 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [ ] Implement offline mode and sync queue
 - [ ] Create unit tests for core functionality
 - [ ] Perform UI testing
+- [ ] Test image loading performance and caching
 
 ## Phase 3: Integration and Deployment
 
@@ -119,26 +134,33 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Fix issues with database migrations and triggers
 - [x] Configure required secrets in GitHub repository
 - [ ] Set up iOS CI pipeline
+- [ ] Add storage bucket creation to deployment workflow
 
 ### Step 2: End-to-End Testing
 - [ ] Test complete user flows with real backend
 - [ ] Verify push notifications work correctly
 - [ ] Test edge cases (network issues, app backgrounding)
+- [ ] Test image upload and retrieval workflows
+- [ ] Verify image caching and performance
 
 ### Step 3: Performance Optimization
 - [ ] Optimize database queries
 - [ ] Improve app loading and response times
 - [ ] Reduce network requests
+- [ ] Implement efficient image loading and caching strategies
+- [ ] Optimize image compression and storage
 
 ### Step 4: Deployment Preparation
 - [ ] Configure production environments
 - [ ] Set up APNs certificates for production
 - [ ] Prepare App Store assets and screenshots
+- [ ] Configure production storage bucket with proper policies
 
 ### Step 5: Documentation
 - [ ] Complete API documentation
 - [ ] Document known issues and limitations
 - [ ] Create user guide or help documentation
+- [ ] Document image upload and management procedures
 
 ### Step 6: Launch
 - [ ] Deploy Supabase production instance

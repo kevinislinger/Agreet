@@ -1,7 +1,7 @@
 # Agreet App – Developer Guide
 
 ## Overview
-Agreet helps small groups quickly reach consensus by swiping through category-specific options (e.g., cuisines, movies). Users anonymously join a “swiping session,” like or dislike each option in Tinder-style fashion, and the first option liked by **N** participants ends the session as the match. Push notifications keep everyone in sync.
+Agreet helps small groups quickly reach consensus by swiping through category-specific options (e.g., cuisines, movies). Users anonymously join a "swiping session," like or dislike each option in Tinder-style fashion, and the first option liked by **N** participants ends the session as the match. Push notifications keep everyone in sync.
 
 ## Tech Stack
 - **Frontend**: SwiftUI (iOS 17+)
@@ -26,8 +26,8 @@ Agreet helps small groups quickly reach consensus by swiping through category-sp
 - List of **Open Sessions** (joined but unmatched)
 - Pull-to-refresh (swipe down) or automatic refresh on view appear fetches latest session statuses; if any session status becomes `matched`, the app automatically navigates to the corresponding Results screen.
 - Primary actions:
-  - “Start Session”
-  - “Join Session”
+  - "Start Session"
+  - "Join Session"
 - Session cell shows: category icon, quorum _N_, participants joined / N, last updated time.
 
 ### 2. Start Session Flow
@@ -40,7 +40,7 @@ Agreet helps small groups quickly reach consensus by swiping through category-sp
 ### 3. Join Session Flow
 1. Input invite code.
 2. Validate via Supabase RPC; fetch session meta & deck.
-3. **Server-side guard**: reject join if `session_participants` count ≥ `sessions.quorum_n` (client shows “Session full” alert).
+3. **Server-side guard**: reject join if `session_participants` count ≥ `sessions.quorum_n` (client shows "Session full" alert).
 4. If session already matched/closed → show read-only result.
 5. Else → enter Swipe Deck.
 
@@ -56,7 +56,7 @@ Agreet helps small groups quickly reach consensus by swiping through category-sp
 
 ### 5. Results Screen
 - Matched option image, label, list of agreeing users.
-- “Start New Session” CTA.
+- "Start New Session" CTA.
 
 ### 6. Closed Sessions
 - Historical list (matched or manually closed) sorted by date.
@@ -90,8 +90,15 @@ Implementation:
 | `categories` | id, name |
 | `sessions` | id, creator_id, category_id (fk), quorum_n, status (open/matched/closed), matched_option_id, invite_code, created_at |
 | `session_participants` | session_id, user_id, joined_at (CHECK: participant_count(session_id) < quota at insert time) |
-| `options` | id, category_id (fk), label, image_url |
+| `options` | id, category_id (fk), label, image_path |
 | `likes` | id, session_id, option_id, user_id, created_at |
+
+### Storage Bucket Structure
+- **Bucket Name**: `option-images`
+- **Path Structure**: `{category_id}/{option_id}.{extension}`
+- **Example**: `restaurants/option_123.jpg`
+- **Access Control**: Public read access for authenticated users
+- **File Types**: JPEG, PNG, WebP (max 5MB per image)
 
 Indexes & RLS policies secure rows per `session_id` membership (also include a BEFORE INSERT trigger on `session_participants` that raises an exception when `SELECT COUNT(*) FROM session_participants WHERE session_id = NEW.session_id` >= `(SELECT quorum_n FROM sessions WHERE id = NEW.session_id)`).
 
