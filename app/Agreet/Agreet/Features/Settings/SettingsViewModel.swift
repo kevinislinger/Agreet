@@ -32,17 +32,6 @@ class SettingsViewModel: ObservableObject {
         return "1.0.0"
     }
     
-    var memberSinceText: String {
-        guard let createdAt = authService.currentUser?.createdAt else {
-            return "Unknown"
-        }
-        
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        return formatter.string(from: createdAt)
-    }
-    
     // MARK: - Initialization
     init() {
         loadUserData()

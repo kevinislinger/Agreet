@@ -141,51 +141,7 @@ struct SettingsView: View {
                             .padding(.bottom, 8)
                     }
                     
-                    // App Information Section
-                    Section {
-                        HStack {
-                            Image(systemName: "info.circle.fill")
-                                .font(.title2)
-                                .foregroundColor(.themeSecondary)
-                            
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Version")
-                                    .font(.headline)
-                                    .foregroundColor(.themeTextPrimary)
-                                
-                                Text(viewModel.appVersion)
-                                    .font(.caption)
-                                    .foregroundColor(.themeTextSecondary)
-                            }
-                            
-                            Spacer()
-                        }
-                        .padding(.vertical, 4)
-                        
-                        HStack {
-                            Image(systemName: "calendar")
-                                .foregroundColor(.themeSecondary)
-                            
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Member Since")
-                                    .font(.headline)
-                                    .foregroundColor(.themeTextPrimary)
-                                
-                                Text(viewModel.memberSinceText)
-                                    .font(.caption)
-                                    .foregroundColor(.themeTextSecondary)
-                            }
-                            
-                            Spacer()
-                        }
-                        .padding(.vertical, 4)
-                    } header: {
-                        Text("App Information")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.themeTextPrimary)
-                            .textCase(nil)
-                            .padding(.bottom, 8)
-                    }
+
                     
                     // Support Section
                     Section {
