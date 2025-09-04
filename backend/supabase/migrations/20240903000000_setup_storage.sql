@@ -30,24 +30,8 @@ BEGIN
     RAISE NOTICE 'Public read access policy already exists';
   END IF;
   
-  -- Create policy for file size and type restrictions if it doesn't exist
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies 
-    WHERE tablename = 'objects' 
-    AND policyname = 'File size and type restrictions'
-    AND schemaname = 'storage'
-  ) THEN
-    CREATE POLICY "File size and type restrictions" ON storage.objects
-    FOR INSERT WITH CHECK (
-      bucket_id = 'option-images' 
-      AND octet_length(data) <= 5242880 
-      AND (mime_type IN ('image/jpeg', 'image/png', 'image/webp'))
-    );
-    
-    RAISE NOTICE 'Created file restrictions policy';
-  ELSE
-    RAISE NOTICE 'File restrictions policy already exists';
-  END IF;
+  -- Note: File size and type restrictions are handled at the bucket level
+  -- The bucket creation above already sets file_size_limit and allowed_mime_types
   
 END $$;
 
