@@ -20,4 +20,7 @@ DROP POLICY IF EXISTS "Public read access for authenticated users" ON storage.ob
 CREATE POLICY "Authenticated read access for option images" ON storage.objects
 FOR SELECT USING (bucket_id = 'option-images' AND auth.role() = 'authenticated');
 
-RAISE NOTICE 'Created authenticated read access policy for option-images bucket';
+DO $$
+BEGIN
+  RAISE NOTICE 'Created authenticated read access policy for option-images bucket';
+END $$;
