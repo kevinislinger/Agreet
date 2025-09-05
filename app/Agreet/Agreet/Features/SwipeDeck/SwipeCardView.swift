@@ -10,7 +10,7 @@ struct SwipeCardView: View {
     @State private var scale: CGFloat = 1.0
     
     private let cardWidth: CGFloat = UIScreen.main.bounds.width - 40
-    private let cardHeight: CGFloat = UIScreen.main.bounds.height * 0.6
+    private let cardHeight: CGFloat = UIScreen.main.bounds.height * 0.7
     
     var body: some View {
         ZStack {
@@ -19,106 +19,111 @@ struct SwipeCardView: View {
                 .fill(Color.themeCardBackground)
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
             
-            VStack(spacing: 0) {
-                // Image area
-                ZStack {
-                    // Placeholder background
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.themeSecondary.opacity(0.3))
-                    
-                                        // Option image
-                    if let imagePath = option.imagePath, !imagePath.isEmpty {
-                        AsyncImageView(imagePath: imagePath)
-                            .frame(width: cardWidth, height: cardHeight * 0.7)
-                            .clipped()
-                    } else {
-                        // Fallback when no image path is available
-                        VStack(spacing: 16) {
-                            Image(systemName: "photo.fill")
-                                .font(.system(size: 60))
-                                .foregroundColor(.themeTextSecondary)
-                            
-                            Text(option.label)
-                                .font(.title3)
-                                .fontWeight(.medium)
-                                .foregroundColor(.themeTextSecondary)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(3)
-                                .padding(.horizontal, 20)
-                        }
-                    }
-                    
-                    // Like/Dislike overlay indicators
-                    HStack {
-                        // Dislike indicator (left side)
-                        VStack {
-                            Spacer()
-                            HStack {
-                                Text("NOPE")
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.themeDislikeColor)
-                                    )
-                                    .rotationEffect(.degrees(-15))
-                                    .opacity(offset.width < 0 ? Double(-offset.width / 50) : 0)
-                                
-                                Spacer()
-                            }
-                            .padding(.leading, 20)
-                            Spacer()
-                        }
-                        
-                        Spacer()
-                        
-                        // Like indicator (right side)
-                        VStack {
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                Text("LIKE")
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.themeLikeColor)
-                                    )
-                                    .rotationEffect(.degrees(15))
-                                    .opacity(offset.width > 0 ? Double(offset.width / 50) : 0)
-                            }
-                            .padding(.trailing, 20)
-                            Spacer()
-                        }
-                    }
-                }
-                .frame(height: cardHeight * 0.7)
-                .clipped()
+            // Main image area with text overlay
+            ZStack {
+                // Placeholder background
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.themeSecondary.opacity(0.3))
                 
-                // Text area
-                VStack(spacing: 8) {
-                    Text(option.label)
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.themeTextPrimary)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
-                    
-                    Text("Swipe right to like, left to pass")
-                        .font(.caption)
-                        .foregroundColor(.themeTextSecondary)
-                        .multilineTextAlignment(.center)
+                // Option image
+                if let imagePath = option.imagePath, !imagePath.isEmpty {
+                    AsyncImageView(imagePath: imagePath)
+                        .frame(width: cardWidth, height: cardHeight)
+                        .clipped()
+                        .cornerRadius(20)
+                } else {
+                    // Fallback when no image path is available
+                    VStack(spacing: 16) {
+                        Image(systemName: "photo.fill")
+                            .font(.system(size: 60))
+                            .foregroundColor(.themeTextSecondary)
+                        
+                        Text(option.label)
+                            .font(.title3)
+                            .fontWeight(.medium)
+                            .foregroundColor(.themeTextSecondary)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(3)
+                            .padding(.horizontal, 20)
+                    }
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
-                .frame(height: cardHeight * 0.3)
+                
+                // Text overlay at bottom
+                VStack {
+                    Spacer()
+                    
+                    // Full-width gradient background at bottom
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.7)]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 100)
+                    .overlay(
+                        // Text on top of the gradient
+                        Text(option.label)
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
+                            .padding(.horizontal, 20)
+                            .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
+                    )
+                }
+                
+                // Like/Dislike overlay indicators
+                HStack {
+                    // Dislike indicator (left side)
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Text("NOPE")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.themeDislikeColor)
+                                )
+                                .rotationEffect(.degrees(-15))
+                                .opacity(offset.width < 0 ? Double(-offset.width / 50) : 0)
+                            
+                            Spacer()
+                        }
+                        .padding(.leading, 20)
+                        Spacer()
+                    }
+                    
+                    Spacer()
+                    
+                    // Like indicator (right side)
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Text("LIKE")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.themeLikeColor)
+                                )
+                                .rotationEffect(.degrees(15))
+                                .opacity(offset.width > 0 ? Double(offset.width / 50) : 0)
+                        }
+                        .padding(.trailing, 20)
+                        Spacer()
+                    }
+                }
             }
+            .frame(width: cardWidth, height: cardHeight)
+            .clipped()
         }
         .frame(width: cardWidth, height: cardHeight)
         .offset(offset)

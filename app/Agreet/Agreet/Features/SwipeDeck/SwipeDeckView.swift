@@ -230,7 +230,6 @@ struct SwipeDeckView: View {
             .disabled(viewModel.currentOptions.isEmpty)
         }
         .padding(.bottom, 40)
-        .background(Color.themeCardBackground)
     }
 }
 
