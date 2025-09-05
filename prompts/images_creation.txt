@@ -1,0 +1,316 @@
+# Agreet App - AI Image Generation Prompts
+
+## 🎨 SYSTEM PROMPT (Copy this first for every image)
+
+```
+You are an expert AI image generator creating images for a social consensus app called Agreet. 
+
+STYLE REQUIREMENTS:
+- Modern, clean, professional design
+- Slightly stylized but realistic (not cartoonish)
+- Bright, vibrant colors that are engaging
+- High contrast and clear visibility
+- Suitable for all ages and cultures
+- Consistent with modern app design aesthetics
+
+TECHNICAL SPECIFICATIONS:
+- Image size: 1024x1024 pixels
+- Format: High-quality JPEG
+- Style: Photorealistic with artistic enhancement
+- Lighting: Bright, clear, professional
+- Composition: Centered, balanced, Instagram-worthy
+
+CONTENT GUIDELINES:
+- No text, logos, or watermarks
+- No offensive or inappropriate content
+- Family-friendly and universally appealing
+- Clear focal point and subject matter
+- Professional quality suitable for commercial use
+
+Create an image that follows these exact specifications.
+```
+
+---
+
+## 🍽️ RESTAURANTS Category
+
+### Italian
+```
+Create a vibrant, appetizing image of a classic Italian pizza margherita with melted mozzarella, fresh basil leaves, and a crispy golden crust. The pizza should be on a rustic wooden board with Italian flag colors subtly incorporated. Style: modern food photography, warm lighting, appetizing.
+```
+
+### Japanese
+```
+Generate a beautiful Japanese bento box with sushi rolls, tempura, and miso soup. Include traditional Japanese elements like cherry blossoms or bamboo. The presentation should be colorful and appealing. Style: clean, modern, appetizing food photography.
+```
+
+### Mexican
+```
+Create a festive Mexican food spread featuring colorful tacos, guacamole, and salsa. Include traditional Mexican elements like sombreros or papel picado in the background. The food should look fresh and inviting. Style: vibrant, warm colors, fun atmosphere.
+```
+
+### Chinese
+```
+Generate an elegant Chinese restaurant scene with steaming dim sum, colorful dumplings, and traditional tea service. Include subtle Chinese cultural elements. The food should look authentic and delicious. Style: sophisticated, appetizing, cultural.
+```
+
+### Thai
+```
+Create a vibrant Thai food image with pad thai, green curry, and fresh herbs. Include tropical elements and bright colors. The food should look fresh and spicy. Style: colorful, tropical, appetizing.
+```
+
+### Indian
+```
+Generate a rich Indian feast with butter chicken, naan bread, and colorful spices. Include traditional Indian elements like brass serving dishes. The food should look aromatic and flavorful. Style: warm, rich colors, cultural authenticity.
+```
+
+### Greek
+```
+Create a Mediterranean Greek food scene with moussaka, Greek salad, and olives. Include blue and white colors reminiscent of Greek islands. The food should look fresh and healthy. Style: Mediterranean, clean, appetizing.
+```
+
+### French
+```
+Generate an elegant French bistro scene with coq au vin, baguettes, and wine. Include Parisian elements like Eiffel Tower silhouette. The food should look sophisticated and delicious. Style: elegant, romantic, French chic.
+```
+
+### Korean
+```
+Create a colorful Korean BBQ scene with bulgogi, kimchi, and banchan side dishes. Include traditional Korean elements and vibrant colors. The food should look fresh and flavorful. Style: vibrant, modern, cultural.
+```
+
+### American
+```
+Generate a classic American diner scene with hamburger, fries, and milkshake. Include retro diner elements like checkered floors or neon signs. The food should look indulgent and nostalgic. Style: retro, fun, American classic.
+```
+
+---
+
+## 🎬 MOVIES Category
+
+### Action
+```
+Create a dynamic action movie scene with explosions, car chases, and dramatic lighting. Include elements like fire, smoke, and intense colors. The scene should feel exciting and cinematic. Style: high-energy, dramatic, Hollywood action.
+```
+
+### Comedy
+```
+Generate a fun, lighthearted comedy scene with bright colors, silly props, and happy expressions. Include elements like confetti, balloons, or funny faces. The scene should feel joyful and humorous. Style: bright, cheerful, fun-loving.
+```
+
+### Drama
+```
+Create an emotional dramatic scene with moody lighting, intense expressions, and deep shadows. Include elements that convey strong emotions. The scene should feel powerful and moving. Style: moody, intense, emotionally charged.
+```
+
+### Horror
+```
+Generate a spooky horror scene with dark atmosphere, eerie lighting, and mysterious shadows. Include subtle scary elements without being too graphic. The scene should feel atmospheric and creepy. Style: dark, mysterious, spine-chilling.
+```
+
+### Sci-Fi
+```
+Create a futuristic sci-fi scene with advanced technology, space elements, and neon lighting. Include robots, spaceships, or futuristic cityscapes. The scene should feel innovative and otherworldly. Style: futuristic, technological, space-age.
+```
+
+### Romance
+```
+Generate a romantic scene with soft lighting, warm colors, and intimate atmosphere. Include elements like candles, flowers, or romantic settings. The scene should feel loving and tender. Style: soft, romantic, intimate.
+```
+
+### Thriller
+```
+Create a suspenseful thriller scene with tense atmosphere, dramatic shadows, and mysterious elements. Include elements that build suspense and intrigue. The scene should feel gripping and intense. Style: suspenseful, mysterious, edge-of-seat.
+```
+
+### Animation
+```
+Generate a colorful animated scene with vibrant characters, whimsical elements, and playful design. Include cartoon-style elements and bright colors. The scene should feel fun and imaginative. Style: colorful, whimsical, animated.
+```
+
+### Documentary
+```
+Create an educational documentary scene with natural lighting, authentic subjects, and informative elements. Include elements that suggest learning and discovery. The scene should feel educational and engaging. Style: natural, authentic, educational.
+```
+
+### Fantasy
+```
+Generate a magical fantasy scene with mystical elements, enchanted forests, and magical creatures. Include elements like sparkles, glowing objects, or mythical beings. The scene should feel magical and enchanting. Style: magical, mystical, fantastical.
+```
+
+---
+
+## 🏃‍♂️ ACTIVITIES Category
+
+### Hiking
+```
+Create a beautiful hiking scene with mountain trails, scenic vistas, and outdoor equipment. Include elements like hiking boots, backpacks, and natural landscapes. The scene should feel adventurous and inspiring. Style: natural, outdoor, adventurous.
+```
+
+### Swimming
+```
+Generate a refreshing swimming scene with clear water, pool or beach settings, and swimming equipment. Include elements like pool noodles, beach balls, or swim goggles. The scene should feel refreshing and fun. Style: refreshing, aquatic, enjoyable.
+```
+
+### Bowling
+```
+Create a fun bowling alley scene with bowling pins, colorful balls, and retro atmosphere. Include elements like score screens, bowling shoes, and neon lighting. The scene should feel nostalgic and entertaining. Style: retro, fun, nostalgic.
+```
+
+### Mini Golf
+```
+Generate a whimsical mini golf scene with colorful obstacles, fun decorations, and playful design. Include elements like windmills, castles, or animal obstacles. The scene should feel fun and family-friendly. Style: whimsical, colorful, playful.
+```
+
+### Escape Room
+```
+Create a mysterious escape room scene with puzzles, clues, and atmospheric lighting. Include elements like locked boxes, mysterious symbols, and dramatic shadows. The scene should feel intriguing and challenging. Style: mysterious, puzzle-like, atmospheric.
+```
+
+### Karaoke
+```
+Generate a fun karaoke scene with microphones, colorful lighting, and party atmosphere. Include elements like song lyrics, disco balls, or musical notes. The scene should feel energetic and entertaining. Style: energetic, fun, party atmosphere.
+```
+
+### Museum
+```
+Create an educational museum scene with exhibits, artifacts, and cultural elements. Include elements like display cases, historical objects, or artistic pieces. The scene should feel educational and inspiring. Style: educational, cultural, inspiring.
+```
+
+### Board Games
+```
+Generate a cozy board game scene with various games, comfortable seating, and warm lighting. Include elements like dice, game pieces, or strategy elements. The scene should feel social and engaging. Style: cozy, social, engaging.
+```
+
+### Beach
+```
+Create a relaxing beach scene with sand, ocean, and beach activities. Include elements like beach towels, umbrellas, or beach toys. The scene should feel peaceful and relaxing. Style: peaceful, coastal, relaxing.
+```
+
+### Park
+```
+Generate a peaceful park scene with trees, walking paths, and outdoor activities. Include elements like benches, playground equipment, or natural scenery. The scene should feel peaceful and natural. Style: peaceful, natural, outdoor.
+```
+
+---
+
+## 🎮 GAMES Category
+
+### Minecraft
+```
+Create a blocky Minecraft scene with cubic characters, pixelated landscapes, and mining elements. Include elements like diamond pickaxes, creepers, or block structures. The scene should feel blocky and creative. Style: pixelated, blocky, creative.
+```
+
+### Fortnite
+```
+Generate a colorful Fortnite scene with battle royale elements, building mechanics, and vibrant characters. Include elements like building materials, weapons, or battle bus. The scene should feel action-packed and colorful. Style: colorful, action-packed, battle royale.
+```
+
+### Among Us
+```
+Create a fun Among Us scene with colorful astronauts, space station setting, and mystery elements. Include elements like tasks, vents, or emergency meetings. The scene should feel fun and mysterious. Style: colorful, mysterious, space-themed.
+```
+
+### Call of Duty
+```
+Generate an intense Call of Duty scene with military action, tactical equipment, and dramatic lighting. Include elements like weapons, military gear, or combat situations. The scene should feel intense and tactical. Style: intense, tactical, military.
+```
+
+### FIFA
+```
+Create an exciting soccer scene with stadium atmosphere, soccer balls, and team spirit. Include elements like goal posts, team colors, or cheering crowds. The scene should feel exciting and competitive. Style: exciting, competitive, sports.
+```
+
+### Mario Kart
+```
+Generate a fun Mario Kart scene with colorful characters, racing tracks, and power-ups. Include elements like karts, racing items, or iconic Mario elements. The scene should feel fun and fast-paced. Style: fun, fast-paced, Nintendo-style.
+```
+
+### League of Legends
+```
+Create an epic fantasy battle scene with champions, magical abilities, and dramatic lighting. Include elements like magical effects, fantasy characters, or battle arena. The scene should feel epic and magical. Style: epic, magical, fantasy battle.
+```
+
+### Valorant
+```
+Generate a tactical shooter scene with agents, abilities, and strategic elements. Include elements like tactical equipment, special abilities, or competitive atmosphere. The scene should feel tactical and strategic. Style: tactical, strategic, competitive.
+```
+
+### Roblox
+```
+Create a creative Roblox scene with various game types, colorful characters, and building elements. Include elements like different game modes, creative tools, or social interaction. The scene should feel creative and social. Style: creative, social, colorful.
+```
+
+### Apex Legends
+```
+Generate a futuristic battle royale scene with legends, abilities, and sci-fi elements. Include elements like futuristic weapons, special abilities, or advanced technology. The scene should feel futuristic and action-packed. Style: futuristic, action-packed, sci-fi.
+```
+
+---
+
+## 📝 USAGE INSTRUCTIONS
+
+### Step 1: Copy the System Prompt
+Copy the entire SYSTEM PROMPT section above and paste it into DALL-E 3 first.
+
+### Step 2: Copy Individual Image Prompt
+Copy the specific prompt for the image you want to create (e.g., the Italian restaurant prompt).
+
+### Step 3: Generate Image
+Paste both prompts into DALL-E 3 and generate the image.
+
+### Step 4: Save and Upload
+- Save as: `[filename].jpg` (see filenames below)
+- Upload to: `[folder]/` in Supabase Storage
+
+---
+
+## 📁 FILENAME REFERENCE
+
+### Restaurants:
+- `italian.jpg` → `restaurants/` folder
+- `japanese.jpg` → `restaurants/` folder
+- `mexican.jpg` → `restaurants/` folder
+- `chinese.jpg` → `restaurants/` folder
+- `thai.jpg` → `restaurants/` folder
+- `indian.jpg` → `restaurants/` folder
+- `greek.jpg` → `restaurants/` folder
+- `french.jpg` → `restaurants/` folder
+- `korean.jpg` → `restaurants/` folder
+- `american.jpg` → `restaurants/` folder
+
+### Movies:
+- `action.jpg` → `movies/` folder
+- `comedy.jpg` → `movies/` folder
+- `drama.jpg` → `movies/` folder
+- `horror.jpg` → `movies/` folder
+- `scifi.jpg` → `movies/` folder
+- `romance.jpg` → `movies/` folder
+- `thriller.jpg` → `movies/` folder
+- `animation.jpg` → `movies/` folder
+- `documentary.jpg` → `movies/` folder
+- `fantasy.jpg` → `movies/` folder
+
+### Activities:
+- `hiking.jpg` → `activities/` folder
+- `swimming.jpg` → `activities/` folder
+- `bowling.jpg` → `activities/` folder
+- `minigolf.jpg` → `activities/` folder
+- `escaperoom.jpg` → `activities/` folder
+- `karaoke.jpg` → `activities/` folder
+- `museum.jpg` → `activities/` folder
+- `boardgames.jpg` → `activities/` folder
+- `beach.jpg` → `activities/` folder
+- `park.jpg` → `activities/` folder
+
+### Games:
+- `minecraft.jpg` → `games/` folder
+- `fortnite.jpg` → `games/` folder
+- `amongus.jpg` → `games/` folder
+- `cod.jpg` → `games/` folder
+- `fifa.jpg` → `games/` folder
+- `mariokart.jpg` → `games/` folder
+- `lol.jpg` → `games/` folder
+- `valorant.jpg` → `games/` folder
+- `roblox.jpg` → `games/` folder
+- `apex.jpg` → `games/` folder

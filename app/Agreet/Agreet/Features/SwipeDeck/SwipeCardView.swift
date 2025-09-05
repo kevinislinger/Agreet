@@ -26,36 +26,25 @@ struct SwipeCardView: View {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(Color.themeSecondary.opacity(0.3))
                     
-                    // Option image
-                    if let url = URL(string: option.imageUrl) {
-                        AsyncImage(url: url) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        } placeholder: {
-                            // Placeholder content
-                            VStack(spacing: 12) {
-                                Image(systemName: "photo")
-                                    .font(.system(size: 40))
-                                    .foregroundColor(.themeTextSecondary)
-                                
-                                Text("Loading...")
-                                    .font(.caption)
-                                    .foregroundColor(.themeTextSecondary)
-                            }
-                        }
-                        .frame(width: cardWidth, height: cardHeight * 0.7)
-                        .clipped()
+                                        // Option image
+                    if let imagePath = option.imagePath, !imagePath.isEmpty {
+                        AsyncImageView(imagePath: imagePath)
+                            .frame(width: cardWidth, height: cardHeight * 0.7)
+                            .clipped()
                     } else {
-                        // Fallback for invalid URLs
-                        VStack(spacing: 12) {
-                            Image(systemName: "photo")
-                                .font(.system(size: 40))
+                        // Fallback when no image path is available
+                        VStack(spacing: 16) {
+                            Image(systemName: "photo.fill")
+                                .font(.system(size: 60))
                                 .foregroundColor(.themeTextSecondary)
                             
-                            Text("No Image")
-                                .font(.caption)
+                            Text(option.label)
+                                .font(.title3)
+                                .fontWeight(.medium)
                                 .foregroundColor(.themeTextSecondary)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(3)
+                                .padding(.horizontal, 20)
                         }
                     }
                     
@@ -191,7 +180,7 @@ struct SwipeCardView: View {
             id: UUID(),
             categoryId: UUID(),
             label: "Pizza Margherita",
-            imageUrl: "https://example.com/pizza.jpg"
+            imagePath: "restaurants/italian.jpg"
         ),
         isTopCard: true,
         onSwipe: { _ in }

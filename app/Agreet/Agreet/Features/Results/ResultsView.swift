@@ -67,23 +67,30 @@ struct ResultsView: View {
             
             VStack(spacing: 16) {
                 // Option image
-                if let url = URL(string: option.imageUrl) {
-                    AsyncImage(url: url) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.themeSecondary.opacity(0.3))
-                            .overlay(
-                                Image(systemName: "photo")
+                if let imagePath = option.imagePath, !imagePath.isEmpty {
+                    AsyncImageView(imagePath: imagePath)
+                        .frame(width: 280, height: 200)
+                        .clipped()
+                        .cornerRadius(16)
+                } else {
+                    // Fallback when no image is available
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.themeSecondary.opacity(0.3))
+                        .overlay(
+                            VStack(spacing: 8) {
+                                Image(systemName: "photo.fill")
                                     .font(.system(size: 40))
                                     .foregroundColor(.themeTextSecondary)
-                            )
-                    }
-                    .frame(width: 280, height: 200)
-                    .clipped()
-                    .cornerRadius(16)
+                                
+                                Text(option.label)
+                                    .font(.caption)
+                                    .foregroundColor(.themeTextSecondary)
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(2)
+                                    .padding(.horizontal, 16)
+                            }
+                        )
+                        .frame(width: 280, height: 200)
                 }
                 
                 // Option label
@@ -144,7 +151,7 @@ struct ResultsView: View {
                 id: UUID(),
                 categoryId: UUID(),
                 label: "Pizza Margherita",
-                imageUrl: "https://example.com/pizza.jpg"
+                imagePath: "restaurants/italian.jpg"
             ),
             category: Category(id: UUID(), name: "Food", iconUrl: nil)
         ),
@@ -152,7 +159,7 @@ struct ResultsView: View {
             id: UUID(),
             categoryId: UUID(),
             label: "Pizza Margherita",
-            imageUrl: "https://example.com/pizza.jpg"
+            imagePath: "restaurants/italian.jpg"
         )
     )
 }

@@ -45,7 +45,7 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 ### Step 7: Seed Data and Testing
 - [x] Create seed data for categories and options
 - [ ] Upload sample images manually to Supabase Storage
-- [ ] Update seed data to reference storage paths instead of URLs
+- [x] Update seed data to reference storage paths instead of URLs
 - [x] Apply database migrations
 - [x] Deploy edge functions
 - [x] Document API endpoints and functions
@@ -70,7 +70,7 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Create session management service
 - [x] Create data models matching the backend schema
 - [x] Implement push notification handling
-- [ ] Create image storage service for Supabase Storage integration
+- [x] Create image storage service for Supabase Storage integration
 
 ### Step 3: Color Palette Implementation
 - [x] Create color assets in Asset Catalog
@@ -103,9 +103,9 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Add like/dislike functionality
 - [x] Connect to backend for recording likes
 - [x] Implement match detection and navigation
-- [ ] Integrate Supabase Storage for option images
-- [ ] Implement image loading and caching
-- [ ] Add fallback handling for failed image loads
+- [x] Integrate Supabase Storage for option images
+- [x] Implement image loading and caching
+- [x] Add fallback handling for failed image loads
 
 ### Step 7: Feature Implementation - Results & History
 - [x] Create Results screen showing matched option
@@ -134,7 +134,6 @@ This document outlines a step-by-step approach to implementing the Agreet applic
 - [x] Fix issues with database migrations and triggers
 - [x] Configure required secrets in GitHub repository
 - [ ] Set up iOS CI pipeline
-- [ ] Add storage bucket creation to deployment workflow
 
 ### Step 2: End-to-End Testing
 - [ ] Test complete user flows with real backend
